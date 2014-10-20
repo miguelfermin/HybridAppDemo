@@ -40,81 +40,72 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 });
 
 // ACI Search Controller
-app.controller('SearchCtrl', function($scope, $http, $stories) {
-
+app.controller('SearchCtrl', function($scope, $http) {
   // ACISearchService test
-  console.log('ACISearchService - $stories: ' + $stories);
-
+  //console.log('ACISearchService - $stories: ' + $stories);
   // NOTE: once I figure out how to do it, move this data fetch logic to the 'ACISearchService' service
-  
-  var numberOfPages  = 0;
-  var pageCounter = 0;
+
+  // Networking
+  $scope.numberOfPages  = 0;
+  $scope.pageCounter = 0;
+  $scope.storyCounter = 0;
   $scope.stories = [];
 
-  // Load stories from aci server.
+
   $scope.loadMore = function() {
-    // console.log('pageCounter: ' + pageCounter.toString());
-    // console.log('numberOfPages: ' + numberOfPages);
-    // console.log('stories.length: ' + $scope.stories.length + '\n ');
-
-    // Keep track of pages to avoid going out of range
-    pageCounter += 1;
-
-    // Search parameters
-    var params = {
-      page: pageCounter.toString()
-    };
+    var params = { page: $scope.pageCounter.toString()};
+    $scope.pageCounter += 1;
 
     $http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
 
       .success(function(data, status, headers) {
-        
+
         if (data && data.hits && data.hits.length > 0) {
-          if (numberOfPages === 0) {
-            //console.log('Number of pages in search: ' + data.nbPages);
-            numberOfPages = data.nbPages;
+          $scope.hits_count = data.hits.length;
+
+          if ($scope.numberOfPages === 0) {
+            $scope.numberOfPages = data.nbPages;
           }
 
           // Load stories
           data.hits.forEach(function(hit) {
-            $scope.stories.push({
+            $scope.storyCounter += 1;
+            var story = {
+              number: $scope.storyCounter,
               title: hit.title,
-              text: hit._highlightResult.text.value,
               date: hit.date,
               pub_id: hit.pub.$id,
               pub_name: hit.pub.name,
               authors: hit.authors
-            });
-            //console.log(hit);
-          });
+            };
 
-          // Broadcast that we're done loading data
+            if (hit._highlightResult.text) {
+              story.text = hit._highlightResult.text.value;
+            } else {
+              story.text = '_highlightResult.text was null';
+            }
+            $scope.stories.push(story);
+          });
           $scope.$broadcast('scroll.infiniteScrollComplete');
         }
       })
-
-      .error(function(error, code) {
-        if (code === 404) {
-          alert("Error: " + error + ' (' + code + '). There are no more stories to load from the server');
-        }
-        else {
-          alert("Error: " + error + ', code: ' + code);
-        }
-      });
+      .error(function(error, code) {alert("Error: " + error + ', code: ' + code);});
   };
 
-  // Stop infinite scroll once there is no more data to load
-  $scope.moreDataCanBeLoaded = function() {
-    if (pageCounter == numberOfPages) {
-      return false;
-    } else {
-      return true;
-    }
-  };
+  // $scope.moreDataCanBeLoaded = function() {
+  //   console.log('$scope.moreDataCanBeLoaded = function(): ' + $scope.pageCounter );
+  //   if ($scope.pageCounter === 0 || $scope.search_data.stories.length >= 20) {
+  //     return true;
+  //   }
+  //   else {
+  //     return false;
+  //   }
+  // };
 
-  // Listen 'stateChangeSuccess' and continue loading data infinitely
+  //Listen 'stateChangeSuccess' and continue loading data infinitely
   $scope.$on('$stateChangeSuccess', function() {
-    $scope.loadMore();
+    console.log('$on($stateChangeSuccess) ... calling loadMore()...\n ');
+    //$scope.loadMore();
   });
 
 });
@@ -122,7 +113,6 @@ app.controller('SearchCtrl', function($scope, $http, $stories) {
 app.controller('SearchDetailCtrl', function($scope, $stateParams, $story) {
   // ACISearchService test
   console.log('ACISearchService - $story.pub_id: ' + $story.pub_id);
-
   // console.log('$stateParams.pub_id: ' + $stateParams.pub_id);
   // console.log('$stateParams.story_title: ' + $stateParams.story_title);
   // console.log('$stateParams.story_text: ' + $stateParams.story_text);
@@ -133,3 +123,24 @@ app.controller('SearchDetailCtrl', function($scope, $stateParams, $story) {
 });
 
 
+
+
+/*
+, $ionicModal
+$scope.scroll_distance = '10';
+  // Demo runtime setup
+  $scope.openSettings = function() {
+    // Form data for the login modal
+    $scope.settingsData = {};
+    // Create the login modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/login.html', { scope: $scope }).then(function(modal) { $scope.modal = modal; });
+    $scope.modal.show();
+    // Triggered in the login modal to close it
+    $scope.closeLogin = function() {
+      console.log('settingsData.scroll_distance: ' + $scope.settingsData.scroll_distance);
+      $scope.modal.hide();
+
+      $scope.scroll_distance = $scope.settingsData.scroll_distance;
+    };
+  };
+ */
