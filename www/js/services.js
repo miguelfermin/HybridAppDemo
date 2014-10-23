@@ -23,34 +23,6 @@ app.factory('StoriesServiceStatic', function() {
 	};
 });
 
-app.factory('StoriesServiceSimulated', function($http, $q) {
-	var stories = [];
-	return {
-		getStory: function(index) {
-			console.log('index: ' + index);
-			return stories[index];
-		},
-		getStories: function() {
-			var deferred = $q.defer();
-			setTimeout(function() {
-				stories.push({number: 2, title: "Planes", pub_id: "0002", pub_name: "Planes Publication" });
-				stories.push({number: 3, title: "Horses", pub_id: "0003", pub_name: "Horses Publication" });
-				stories.push({number: 4, title: "Ships",  pub_id: "0004", pub_name: "Ships Publication" });
-				stories.push({number: 5, title: "Shoes",  pub_id: "0005", pub_name: "Shoes Publication" });
-				stories.push({number: 6, title: "Cars",   pub_id: "0000", pub_name: "Cars Publication" });
-				stories.push({number: 7, title: "Boats",  pub_id: "0001", pub_name: "Boats Publication" });
-				if (false) {
-					deferred.reject('There was an error with your asynchronous request...');
-				} else {
-					deferred.resolve(stories);
-				}
-			}, 1500);
-			return deferred.promise;
-		}
-	};
-});
-
-
 app.factory('StoriesService', function($http, $q) {
 	var stories = [];
 	var storyCounter = 0;

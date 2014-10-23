@@ -44,7 +44,7 @@ app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
       })
       .error(function(error, code) {alert("Error: " + error + ', code: ' + code);});
   };
-
+  
   //Listen 'stateChangeSuccess' and continue loading data infinitely
   $scope.$on('$stateChangeSuccess', function() {
     //$scope.loadMore();
@@ -56,7 +56,6 @@ app.controller('SearchDetailCtrl', function($scope, $stateParams) {
   $scope.story_title = $stateParams.story_title;
   $scope.story_text = $stateParams.story_text;
 });
-
 
 // Second story search method, using a service to perform the loading work and share data between controllers correctly
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
@@ -73,18 +72,6 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
     function(failedInfo) {
       alert('failedInfo: ' + failedInfo);
     });
-
-  // $scope.loadMore = function() {
-  //   promise.then(
-  //     function(stories) {
-  //       $scope.stories = stories;
-  //       delegate.scrollToRememberedPosition();
-  //       $scope.$broadcast('scroll.infiniteScrollComplete');
-  //     },
-  //     function(failedInfo) {
-  //       alert('failedInfo: ' + failedInfo);
-  //     });
-  // };
 });
 
 app.controller('StoryController', function($scope, story) {
