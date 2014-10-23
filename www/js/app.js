@@ -22,13 +22,37 @@ app.run(function($ionicPlatform) {
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
+  // Menu (main) state
   $stateProvider.state('app', {
       url: "/app",
       abstract: true,
-      templateUrl: "templates/menu.html",
-      controller: 'AppCtrl'
-    });
+      templateUrl: "templates/menu.html"
+  });
 
+
+  // First story search method, without using a service, all work done in the controller. Kept for reference only
+  $stateProvider.state('app.search', {
+    url: "/search",
+    views: {
+      'menuContent' :{
+        templateUrl: "templates/search.html",
+        controller: 'SearchCtrl'
+      }
+    }
+  });
+
+  $stateProvider.state('app.searchDetail', {
+    url: "/search/:pub_id?story_title&story_text&authors",
+    views: {
+      'menuContent' :{
+        templateUrl: "templates/search-detail.html",
+        controller: 'SearchDetailCtrl'
+      }
+    }
+  });
+
+
+  // Second story search method, using a service to perform the loading work and share data between controllers correctly
   // Nested level of our state machine namespaced to app.stories
   $stateProvider.state('app.stories', {
     abstract: true,
@@ -60,38 +84,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
 
-  $stateProvider.state('app.search', {
-    url: "/search",
-    views: {
-      'menuContent' :{
-        templateUrl: "templates/search.html",
-        controller: 'SearchCtrl',
-        resolve: {
-          $stories: function(ACISearchService) {
-            return ACISearchService.getStories();
-          }
-        }
-      }
-    }
-  });
-  $stateProvider.state('app.searchDetail', {
-    url: "/search/:pub_id?story_title&story_text&authors",
-    views: {
-      'menuContent' :{
-        templateUrl: "templates/search-detail.html",
-        controller: 'SearchDetailCtrl',
-
-        // ACISearchService Service test
-        resolve: {
-          $story: function($stateParams, ACISearchService) {
-            return ACISearchService.getStory($stateParams.pub_id);
-          }
-        }
-        // Service test
-      }
-    }
-  });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
+  $urlRouterProvider.otherwise('/app/stories');
+  
 });
-
