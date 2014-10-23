@@ -30,7 +30,7 @@ HybridAppDemo
 10. To deploy to the App Stores or HockeyApp for instance, for iOS it's best to do it in Xcode like you would normally do. For Android I made a document included in this repo [Android Publishing](/docs) which has details on how to accomplish this.
 
 
-### Usefull links: ###
+### Useful links: ###
 
 * [Getting started with Ionic] (http://ionicframework.com/getting-started/)
 * [Xcode SDK](https://developer.apple.com/xcode/downloads/)
