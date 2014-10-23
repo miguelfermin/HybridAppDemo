@@ -6,54 +6,19 @@
 //
 var app = angular.module('starter.controllers', []);
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+app.controller('AppCtrl', function($scope) {
 });
 
 // ACI Search Controller
 app.controller('SearchCtrl', function($scope, $http) {
-  // ACISearchService test
-  //console.log('ACISearchService - $stories: ' + $stories);
-  // NOTE: once I figure out how to do it, move this data fetch logic to the 'ACISearchService' service
-
   // Networking
   $scope.numberOfPages  = 0;
   $scope.pageCounter = 0;
   $scope.storyCounter = 0;
   $scope.stories = [];
 
-
   $scope.loadMore = function() {
-    var params = { page: $scope.pageCounter.toString()};
+    var params = {page: $scope.pageCounter.toString()};
     $scope.pageCounter += 1;
 
     $http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
@@ -86,7 +51,7 @@ app.controller('SearchCtrl', function($scope, $http) {
             }
             $scope.stories.push(story);
           });
-          $scope.$broadcast('scroll.infiniteScrollComplete');
+          //$scope.$broadcast('scroll.infiniteScrollComplete');
         }
       })
       .error(function(error, code) {alert("Error: " + error + ', code: ' + code);});
@@ -107,16 +72,8 @@ app.controller('SearchCtrl', function($scope, $http) {
     console.log('$on($stateChangeSuccess) ... calling loadMore()...\n ');
     //$scope.loadMore();
   });
-
 });
-
 app.controller('SearchDetailCtrl', function($scope, $stateParams, $story) {
-  // ACISearchService test
-  console.log('ACISearchService - $story.pub_id: ' + $story.pub_id);
-  // console.log('$stateParams.pub_id: ' + $stateParams.pub_id);
-  // console.log('$stateParams.story_title: ' + $stateParams.story_title);
-  // console.log('$stateParams.story_text: ' + $stateParams.story_text);
-  //console.log('$stateParams.story_text: ' + $stateParams.authors);
   $scope.pub_id = $stateParams.pub_id;
   $scope.story_title = $stateParams.story_title;
   $scope.story_text = $stateParams.story_text;
@@ -124,23 +81,57 @@ app.controller('SearchDetailCtrl', function($scope, $stateParams, $story) {
 
 
 
+app.controller('StoriesController', function($scope, StoriesService) {
+  // var stories = [
+  // {number: 0, title: "Cars",   pub_id: "0000", pub_name: "Cars Publication" },
+  // {number: 1, title: "Boats",  pub_id: "0001", pub_name: "Boats Publication" },
+  // {number: 2, title: "Planes", pub_id: "0002", pub_name: "Planes Publication" },
+  // {number: 3, title: "Horses", pub_id: "0003", pub_name: "Horses Publication" },
+  // {number: 4, title: "Ships",  pub_id: "0004", pub_name: "Ships Publication" },
+  // {number: 5, title: "Shoes",  pub_id: "0005", pub_name: "Shoes Publication" }
+  // ];
+  // for (var i = 0; i < 10000; i++) {
+  //   stories.push({number: i, title: "Shoes",  pub_id: "000"+i, pub_name: "Random Publication" });
+  // }
+  // $scope.stories = stories;
 
-/*
-, $ionicModal
-$scope.scroll_distance = '10';
-  // Demo runtime setup
-  $scope.openSettings = function() {
-    // Form data for the login modal
-    $scope.settingsData = {};
-    // Create the login modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/login.html', { scope: $scope }).then(function(modal) { $scope.modal = modal; });
-    $scope.modal.show();
-    // Triggered in the login modal to close it
-    $scope.closeLogin = function() {
-      console.log('settingsData.scroll_distance: ' + $scope.settingsData.scroll_distance);
-      $scope.modal.hide();
+  // Handle promise
+  var promise = StoriesService.getStories();
+  promise.then(
+    function(stories) {
+      $scope.stories = stories;
+    },
+    function(failedInfo) {
+      alert('failedInfo: ' + failedInfo);
+    });
 
-      $scope.scroll_distance = $scope.settingsData.scroll_distance;
-    };
+
+  /*
+  $scope.loadMore = function() {
+    promise.then(
+      function(stories) {
+        $scope.stories = stories;
+        //$scope.$broadcast('scroll.infiniteScrollComplete');
+      },
+      function(failedInfo) {
+        alert('failedInfo: ' + failedInfo);
+      });
   };
- */
+  */
+
+  $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+    /*alert('something changed...');
+    console.log(event);
+    console.log(toState);
+    console.log(toParams);
+    console.log(fromState);
+    console.log(fromParams);
+    event.preventDefault(); */
+  });
+});
+
+app.controller('StoryController', function($scope, story) {
+  console.log('story: ' + story.title);
+  $scope.story = story;
+});
+

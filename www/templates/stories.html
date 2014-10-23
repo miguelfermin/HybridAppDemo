@@ -1,0 +1,33 @@
+<ion-view title="Stories">
+	
+	<ion-nav-buttons side="left">
+		<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>	
+	</ion-nav-buttons>
+
+	<!--ion-content>
+		<ion-list>
+
+			<ion-item ng-repeat="story in stories" class="item item-icon-right" ui-sref="app.stories.detail({story: $index})">
+				<span>{{story.title}}</span>
+				<i class="icon ion-ios7-arrow-right"></i>
+			</ion-item>
+
+		</ion-list>
+	</ion-content-->
+
+	<ion-content>
+	<div class="list">
+		<a class="item my-item"
+		collection-repeat="story in stories"
+		collection-item-height="100" 
+		collection-item-width="'100%'"
+		ng-style="{'line-height' :'100px'}"
+		ui-sref="app.stories.detail({story: $index})">
+			{{story.number}}. {{story.title}}
+		</a>
+	</div>
+	<ion-infinite-scroll on-infinite="loadMore()" distance="5%"></ion-infinite-scroll>
+
+</ion-content>
+
+</ion-view>
