@@ -6,25 +6,35 @@
 //
 var app = angular.module('starter.controllers', []);
 
+
+
 // First story search method, without using a service, all work done in the controller. Kept for reference only
 app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
+
   $scope.numberOfPages  = 0;
   $scope.pageCounter = 0;
   $scope.storyCounter = 0;
   $scope.stories = [];
 
   $scope.loadMore = function() {
+
     var params = {page: $scope.pageCounter.toString()};
+    
     $scope.pageCounter += 1;
+    
     $http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
 
       .success(function(data, status, headers) {
+
         if (data && data.hits && data.hits.length > 0) {
+
           $scope.hits_count = data.hits.length;
           if ($scope.numberOfPages === 0) {
             $scope.numberOfPages = data.nbPages;
           }
+
           data.hits.forEach(function(hit) {
+
             $scope.storyCounter += 1;
             var story = {
               number: $scope.storyCounter,
@@ -34,10 +44,14 @@ app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
               pub_name: hit.pub.name,
               authors: hit.authors
             };
+
             if (hit._highlightResult.text) {story.text = hit._highlightResult.text.value;}
             else {story.text = '_highlightResult.text was null';}
+
             $scope.stories.push(story);
+
           });
+
           $scope.$broadcast('scroll.infiniteScrollComplete');
           $ionicScrollDelegate.scrollToRememberedPosition();
         }
@@ -49,6 +63,7 @@ app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
   $scope.$on('$stateChangeSuccess', function() {
     //$scope.loadMore();
   });
+
 });
 
 app.controller('SearchDetailCtrl', function($scope, $stateParams) {
@@ -57,16 +72,14 @@ app.controller('SearchDetailCtrl', function($scope, $stateParams) {
   $scope.story_text = $stateParams.story_text;
 });
 
+
 // Second story search method, using a service to perform the loading work and share data between controllers correctly
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
 
-  //Handle promise
-  var delegate = $ionicScrollDelegate;
-  var promise = StoriesService.getStories();
-
-  promise.then(
+  // Handle StoriesService's getStories() returned promise
+  StoriesService.getStories().then(
     function(stories) {
-      delegate.scrollToRememberedPosition();
+      $ionicScrollDelegate.scrollToRememberedPosition();
       $scope.stories = stories;
     },
     function(failedInfo) {
@@ -75,6 +88,5 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
 });
 
 app.controller('StoryController', function($scope, story) {
-  console.log('story: ' + story.title);
   $scope.story = story;
 });

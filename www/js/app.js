@@ -40,7 +40,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   });
-
   $stateProvider.state('app.searchDetail', {
     url: "/search/:pub_id?story_title&story_text&authors",
     views: {
@@ -68,7 +67,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('app.stories.index', {
     url: '',
     templateUrl:'templates/stories.html',
-    controller: 'StoriesController'
+    controller: 'StoriesController',
+    // Keep data on state to try to avoid the master list to reload when coming back from detail view.
+    // data: {
+    //   stories:[]
+    // }
   });
 
   // Detail
@@ -82,6 +85,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   });
+
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/search');

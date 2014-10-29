@@ -6,56 +6,44 @@
 //
 var app = angular.module('starter.services', []);
 
-app.factory('StoriesServiceStatic', function() {
-	var stories = [
-	{number: 0, title: "Cars",   pub_id: "0000", pub_name: "Cars Publication" },
-	{number: 1, title: "Boats",  pub_id: "0001", pub_name: "Boats Publication" },
-	{number: 2, title: "Planes", pub_id: "0002", pub_name: "Planes Publication" },
-	{number: 3, title: "Horses", pub_id: "0003", pub_name: "Horses Publication" },
-	{number: 4, title: "Ships",  pub_id: "0004", pub_name: "Ships Publication" },
-	{number: 5, title: "Shoes",  pub_id: "0005", pub_name: "Shoes Publication" }
-    ];
-    return {
-    stories: stories,
-    getStory: function(index) {
-    return stories[index];
-    }
-	};
-});
 
-app.factory('StoriesService', function($http, $q) {
+app.factory('StoriesService', function($http, $q, $state) {
+	// $state.current.data.stories - was used for testing
 	var stories = [];
+	var pageCounter = 0;
 	var storyCounter = 0;
+
 	return {
 		getStory: function(index) {
-			//alert('getStory() called...');
-			console.log('index: ' + index);
 			return stories[index];
 		},
 		getStories: function() {
-			//alert('getStories() called...');
+			pageCounter += 1;
 			var deferred = $q.defer();
+			var params = { page: pageCounter.toString() };
 
-			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: {page: '1'} })
+			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
 
-			.success(function(data) {
-				data.hits.forEach(function(hit) {
-					storyCounter += 1;
-					var story = {
-						number: storyCounter,
-						title: hit.title,
-						date: hit.date,
-						pub_id: hit.pub.$id,
-						pub_name: hit.pub.name,
-						authors: hit.authors
-					};
-					stories.push(story);
+				.success(function(data) {
+
+					data.hits.forEach(function(hit) {
+						storyCounter += 1;
+						stories.push({
+							number: storyCounter,
+							title: hit.title,
+							date: hit.date,
+							pub_id: hit.pub.$id,
+							pub_name: hit.pub.name,
+							authors: hit.authors
+						});
+					});
+					deferred.resolve(stories);
+				})
+
+				.error(function(msg, code) {
+					deferred.reject('Error message: ' + msg + ', code: ' + code);
 				});
-				deferred.resolve(stories);
-			})
-			.error(function(msg, code) {
-				deferred.reject('Error message: ' + msg + ', code: ' + code);
-			});
+
 			return deferred.promise;
 		}
 	};
