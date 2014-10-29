@@ -13,7 +13,7 @@ HybridAppDemo
 1. Go to the main directory 'HybridAppDemo' 
 2. If you want to test on a broswer simply navigate to the 'www' directory and open the index.html file (Note: during development is best to stay in the browser to take advantage of the browser's debugging tools).
 
-3. Since the platforms and plugins directories are included in .gitignore, you'll have to add them to the project. Note: currently there's no node_modules directory so for now you don't have to run npm install, but you might have to in the future.
+3. Since the platforms and plugins directories are included in .gitignore, you'll have to add them to the project. Note: currently there's no node_modules directory so for now you don't have to run `npm install`, but you might have to in the future.
 
 4. First create a directory called 'plugins' inside the root directory. This is required before we add any platforms because when we run the platforms command it'll look for that directory to create the platform config JSON file.
 
