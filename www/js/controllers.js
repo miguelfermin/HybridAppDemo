@@ -84,64 +84,65 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
   };
 });
 app.controller('StoryController', function($scope, story) {
+  console.log('StoryController - story: ' + story.title);
   $scope.story = story;
 });
 
 
-
-
 // Stories Search
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, StoriesSearchService) {
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
 
   $scope.performSearch = function() {
-    console.log('performSearch, $scope.search: ' + $scope.search);
+    // Cache the search query to add it to the search box when coming back from the detail view
+    $state.current.data.cachedSearchQuery = $scope.search;
 
-    // Handle StoriesSearchService's getStories() returned promise
-    
+    // Clean stories queues
+    $scope.stories = [];
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
+
+    // Handle StoriesSearchService's searchStories() returned promise
     StoriesSearchService.searchStories($scope.search).then(
     function(stories) {
+      // Remember scroll position when coming back from detail view
       $ionicScrollDelegate.scrollToRememberedPosition();
-      $scope.stories = stories;
 
+      // Cache stories
+      $scope.stories = stories;
+      $state.current.data.cachedStories = stories;
+
+      // Can now load more content for the infinite scroll
       $scope.$broadcast('scroll.infiniteScrollComplete');
-      $ionicScrollDelegate.scrollToRememberedPosition();
     },
     function(failedInfo) {
-      alert('failedInfo: ' + failedInfo);
+      console.log('failedInfo: ' + failedInfo);
     });
-  };
-  
-  $scope.clearSearch = function() {
-    $scope.stories = [];
-    $scope.search = null;
   };
 
   $scope.searchDidChange = function() {
-    console.log('searchDidChange');
+    // Pending implementation...
+    //console.log('searchDidChange');
   };
 
-  // $scope.loadMoreStories = function() {
-  //   // Handle StoriesSearchService's getStories() returned promise
-  //   StoriesSearchService.getStories().then(
-  //   function(stories) {
-  //     $ionicScrollDelegate.scrollToRememberedPosition();
-  //     $scope.stories = stories;
+  $scope.loadMoreStories = function() {
+    // Pending implementation...
+    //console.log('loadMoreStories');
+  };
 
-  //     $scope.$broadcast('scroll.infiniteScrollComplete');
-  //     $ionicScrollDelegate.scrollToRememberedPosition();
-  //   },
-  //   function(failedInfo) {
-  //     alert('failedInfo: ' + failedInfo);
-  //   });
-  // };
+  $scope.clearSearch = function() {
+    // Bring list to a clean state
+    $scope.stories = [];
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
+  };
+
+  // Get list to previous state using cached search query and stories
+  if ($state.current.data.cachedSearchQuery) {
+    $scope.search = $state.current.data.cachedSearchQuery;
+    $scope.stories = $state.current.data.cachedStories;
+  }
 
 });
-
-
-
-
-
-
 
 
 
