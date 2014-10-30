@@ -6,7 +6,7 @@
 //
 var app = angular.module('starter.services', []);
 
-
+// Stories Service
 app.factory('StoriesService', function($http, $q) {
 	// $state.current.data.stories - was used for testing
 	var stories = [];
@@ -54,16 +54,16 @@ app.factory('StoriesService', function($http, $q) {
 });
 
 
-
-
-
+// Story Search Service
 app.factory('StoriesSearchService', function($http, $q) {
-	// $state.current.data.stories - was used for testing
 	var stories = [];
 	var pageCounter = 0;
 	var storyCounter = 0;
 
 	return {
+		clearStories: function () {
+			stories = [];
+		},
 		getStory: function(index) {
 			return stories[index];
 		},
@@ -80,17 +80,22 @@ app.factory('StoriesSearchService', function($http, $q) {
 			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
 
 				.success(function(data) {
-
 					data.hits.forEach(function(hit) {
 						storyCounter += 1;
-						stories.push({
+						var story = {
 							number: storyCounter,
 							title: hit.title,
 							date: hit.date,
 							pub_id: hit.pub.$id,
 							pub_name: hit.pub.name,
 							authors: hit.authors
-						});
+						};
+						stories.push(story);
+						if (hit._highlightResult.text) {
+							story.text = hit._highlightResult.text.value;
+						} else {
+							story.text = '_highlightResult.text was null';
+						}
 					});
 					deferred.resolve(stories);
 				})
@@ -98,16 +103,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 				.error(function(msg, code) {
 					deferred.reject('Error message: ' + msg + ', code: ' + code);
 				});
-
 			return deferred.promise;
 		}
 	};
 });
-
-
-
-
-
-
-
-

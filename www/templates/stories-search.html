@@ -6,38 +6,30 @@
 
   	<!-- Search bar -->
 	<ion-header-bar class="bar-light bar-subheader">
-
 		<div class="bar bar-header item-input-inset">
-
 			<label class="item-input-wrapper">
-
 				<i class="icon ion-ios7-search placeholder-icon"></i>
-
 				<input type="search" placeholder="Search Stories" ng-model="search" ng-change="searchDidChange()">
-
 			</label>
 
 			<button on-tap="performSearch()" class="button button-clear" >Search</button>
 			<br>
 			<button on-tap="clearSearch()" class="button button-clear" >Clear</button>
-
 		</div>
 	</ion-header-bar>
-
+	
 	<ion-content>
-		<!-- Embedding list in a <div> and using collection-repeat -->
 		<div class="list">
 			<a class="item my-item"
 			collection-repeat="story in stories"
 			collection-item-height="100" 
 			collection-item-width="'100%'"
 			ng-style="{'line-height' :'100px'}"
-			ui-sref="app.stories.detail({story: $index})">
+			ui-sref="app.stories-search.detail({story: $index})">
 				{{story.title}}
     		</a>
 		</div>
 		<!-- Infinite scrolling -->
 		<!-- <ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%"></ion-infinite-scroll> -->
 	</ion-content>
-
 </ion-view>

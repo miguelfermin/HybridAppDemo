@@ -34,7 +34,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
 
-
   // Search Filter method, without using a service, all work done in the controller. Kept for reference only
   $stateProvider.state('app.search', {
     url: "/search",
@@ -55,8 +54,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   });
-
-
 
 
   // Show all stories from ACI, using paging and StoriesService
@@ -92,8 +89,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
 
-
-
   // Stories Search
   $stateProvider.state('app.stories-search', {
     abstract: true,
@@ -108,7 +103,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('app.stories-search.index', {
     url: '',
     templateUrl:'templates/stories-search.html',
-    controller: 'StoriesSearchController'
+    controller: 'StoriesSearchController',
+    data: {
+      cachedSearchQuery: null,
+      cachedStories: []
+    }
   });
 
   // Re-using this template from previous state
@@ -117,13 +116,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl:'templates/story.html',
     controller: 'StoryController',
     resolve: {
-      story: function($stateParams, StoriesService) {
-        return StoriesService.getStory($stateParams.story);
+      story: function($stateParams, StoriesSearchService) {
+        return StoriesSearchService.getStory($stateParams.story);
       }
     }
   });
 
-
-  
 
 });
