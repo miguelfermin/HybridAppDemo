@@ -7,17 +7,16 @@
 var app = angular.module('starter.controllers', []);
 
 
-
-// First story search method, without using a service, all work done in the controller. Kept for reference only
-app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
+// Search Filter Controller
+app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
   // Imperfect stories load code, still using it for the show the search filer
   $scope.numberOfPages  = 0;
   $scope.pageCounter = 0;
   $scope.storyCounter = 0;
   $scope.stories = [];
-
   $scope.loadMore = function() {
     var params = {page: $scope.pageCounter.toString()};
+    console.log('$scope.pageCounter: ' + $scope.pageCounter);
     $scope.pageCounter += 1;
     $http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
       .success(function(data, status, headers) {
@@ -44,8 +43,8 @@ app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
       })
       .error(function(error, code) {alert("Error: " + error + ', code: ' + code);});
   };
-  
   $scope.filterSearch = function() {
+    // This needs improvements; it isn't dynamic, when user deletes words it doesn't reload list...
     console.log('$scope.search: ' + $scope.search);
     $scope.stories = $scope.stories
     // The filter() method creates a new array with all elements that pass the test implemented by the provided function.
@@ -56,30 +55,94 @@ app.controller('SearchCtrl', function($scope, $http, $ionicScrollDelegate) {
       return (!$scope.search || item.title.toLowerCase().indexOf($scope.search.toLowerCase()) > -1);
     });
   };
-
 });
-
-app.controller('SearchDetailCtrl', function($scope, $stateParams) {
+app.controller('SearchFilterDetailCtrl', function($scope, $stateParams) {
   $scope.pub_id = $stateParams.pub_id;
   $scope.story_title = $stateParams.story_title;
   $scope.story_text = $stateParams.story_text;
 });
 
 
-// Second story search method, using a service to perform the loading work and share data between controllers correctly
+
+
+// Show all stories from ACI, using paging and StoriesService
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
 
-  // Handle StoriesService's getStories() returned promise
-  StoriesService.getStories().then(
+  $scope.loadMoreStories = function() {
+    // Handle StoriesService's getStories() returned promise
+    StoriesService.getStories().then(
     function(stories) {
       $ionicScrollDelegate.scrollToRememberedPosition();
       $scope.stories = stories;
+
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+      $ionicScrollDelegate.scrollToRememberedPosition();
     },
     function(failedInfo) {
       alert('failedInfo: ' + failedInfo);
     });
+  };
 });
-
 app.controller('StoryController', function($scope, story) {
   $scope.story = story;
 });
+
+
+
+
+// Stories Search
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, StoriesSearchService) {
+
+  $scope.performSearch = function() {
+    console.log('performSearch, $scope.search: ' + $scope.search);
+
+    // Handle StoriesSearchService's getStories() returned promise
+    
+    StoriesSearchService.searchStories($scope.search).then(
+    function(stories) {
+      $ionicScrollDelegate.scrollToRememberedPosition();
+      $scope.stories = stories;
+
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+      $ionicScrollDelegate.scrollToRememberedPosition();
+    },
+    function(failedInfo) {
+      alert('failedInfo: ' + failedInfo);
+    });
+  };
+  
+  $scope.clearSearch = function() {
+    $scope.stories = [];
+    $scope.search = null;
+  };
+
+  $scope.searchDidChange = function() {
+    console.log('searchDidChange');
+  };
+
+  // $scope.loadMoreStories = function() {
+  //   // Handle StoriesSearchService's getStories() returned promise
+  //   StoriesSearchService.getStories().then(
+  //   function(stories) {
+  //     $ionicScrollDelegate.scrollToRememberedPosition();
+  //     $scope.stories = stories;
+
+  //     $scope.$broadcast('scroll.infiniteScrollComplete');
+  //     $ionicScrollDelegate.scrollToRememberedPosition();
+  //   },
+  //   function(failedInfo) {
+  //     alert('failedInfo: ' + failedInfo);
+  //   });
+  // };
+
+});
+
+
+
+
+
+
+
+
+
+

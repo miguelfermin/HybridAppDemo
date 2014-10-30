@@ -22,6 +22,10 @@ app.run(function($ionicPlatform) {
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
+  // Fallback state
+  $urlRouterProvider.otherwise('/app/search');
+
+
   // Menu (main) state
   $stateProvider.state('app', {
       url: "/app",
@@ -30,29 +34,32 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
 
-  // First story search method, without using a service, all work done in the controller. Kept for reference only
+
+  // Search Filter method, without using a service, all work done in the controller. Kept for reference only
   $stateProvider.state('app.search', {
     url: "/search",
     views: {
       'menuContent' :{
-        templateUrl: "templates/search.html",
-        controller: 'SearchCtrl'
+        templateUrl: "templates/search-filter.html",
+        controller: 'SearchFilterCtrl'
       }
     }
   });
+
   $stateProvider.state('app.searchDetail', {
     url: "/search/:pub_id?story_title&story_text&authors",
     views: {
       'menuContent' :{
-        templateUrl: "templates/search-detail.html",
-        controller: 'SearchDetailCtrl'
+        templateUrl: "templates/story.html",
+        controller: 'SearchFilterDetailCtrl'
       }
     }
   });
 
 
-  // Second story search method, using a service to perform the loading work and share data between controllers correctly
-  // Nested level of our state machine namespaced to app.stories
+
+
+  // Show all stories from ACI, using paging and StoriesService
   $stateProvider.state('app.stories', {
     abstract: true,
     url: '/stories',
@@ -63,7 +70,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   });
 
-  // Master
   $stateProvider.state('app.stories.index', {
     url: '',
     templateUrl:'templates/stories.html',
@@ -74,7 +80,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
     // }
   });
 
-  // Detail
   $stateProvider.state('app.stories.detail', {
     url: '/:story',
     templateUrl:'templates/story.html',
@@ -87,7 +92,38 @@ app.config(function($stateProvider, $urlRouterProvider) {
   });
 
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
+
+
+  // Stories Search
+  $stateProvider.state('app.stories-search', {
+    abstract: true,
+    url: '/stories-search',
+    views: {
+      'menuContent': {
+        template: '<ion-nav-view></ion-nav-view>'
+      }
+    }
+  });
+
+  $stateProvider.state('app.stories-search.index', {
+    url: '',
+    templateUrl:'templates/stories-search.html',
+    controller: 'StoriesSearchController'
+  });
+
+  // Re-using this template from previous state
+  $stateProvider.state('app.stories-search.detail', {
+    url: '/:story',
+    templateUrl:'templates/story.html',
+    controller: 'StoryController',
+    resolve: {
+      story: function($stateParams, StoriesService) {
+        return StoriesService.getStory($stateParams.story);
+      }
+    }
+  });
+
+
+  
 
 });

@@ -7,7 +7,7 @@
 var app = angular.module('starter.services', []);
 
 
-app.factory('StoriesService', function($http, $q, $state) {
+app.factory('StoriesService', function($http, $q) {
 	// $state.current.data.stories - was used for testing
 	var stories = [];
 	var pageCounter = 0;
@@ -19,8 +19,12 @@ app.factory('StoriesService', function($http, $q, $state) {
 		},
 		getStories: function() {
 			pageCounter += 1;
+			
 			var deferred = $q.defer();
-			var params = { page: pageCounter.toString() };
+			
+			var params = {
+				page: pageCounter.toString()
+			};
 
 			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
 
@@ -48,6 +52,60 @@ app.factory('StoriesService', function($http, $q, $state) {
 		}
 	};
 });
+
+
+
+
+
+app.factory('StoriesSearchService', function($http, $q) {
+	// $state.current.data.stories - was used for testing
+	var stories = [];
+	var pageCounter = 0;
+	var storyCounter = 0;
+
+	return {
+		getStory: function(index) {
+			return stories[index];
+		},
+		searchStories: function(searchQuery) {
+			pageCounter += 1;
+			
+			var deferred = $q.defer();
+			
+			var params = {
+				q: searchQuery,
+				page: pageCounter.toString()
+			};
+
+			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
+
+				.success(function(data) {
+
+					data.hits.forEach(function(hit) {
+						storyCounter += 1;
+						stories.push({
+							number: storyCounter,
+							title: hit.title,
+							date: hit.date,
+							pub_id: hit.pub.$id,
+							pub_name: hit.pub.name,
+							authors: hit.authors
+						});
+					});
+					deferred.resolve(stories);
+				})
+
+				.error(function(msg, code) {
+					deferred.reject('Error message: ' + msg + ', code: ' + code);
+				});
+
+			return deferred.promise;
+		}
+	};
+});
+
+
+
 
 
 
