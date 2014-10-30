@@ -143,5 +143,3 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   }
 
 });
-
-});
