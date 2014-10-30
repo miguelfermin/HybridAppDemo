@@ -73,8 +73,8 @@ app.factory('StoriesSearchService', function($http, $q) {
 			var deferred = $q.defer();
 			
 			var params = {
-				q: searchQuery,
-				page: pageCounter.toString()
+				q: searchQuery
+				//page: pageCounter.toString()
 			};
 
 			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
@@ -99,7 +99,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 					});
 					deferred.resolve(stories);
 				})
-
+				
 				.error(function(msg, code) {
 					deferred.reject('Error message: ' + msg + ', code: ' + code);
 				});
