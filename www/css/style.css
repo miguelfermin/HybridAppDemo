@@ -6,3 +6,12 @@
   padding-top: 0;
   padding-bottom: 0;
 }
+
+/*#search-bar {
+  background: none;
+  position: absolute;
+  width: 100%;
+  top: 44px;
+  height: 40px;
+  z-index: 3;
+}*/

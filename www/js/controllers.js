@@ -6,7 +6,6 @@
 //
 var app = angular.module('starter.controllers', []);
 
-
 // Search Filter Controller
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
   // Imperfect stories load code, still using it for the show the search filer
@@ -62,9 +61,6 @@ app.controller('SearchFilterDetailCtrl', function($scope, $stateParams) {
   $scope.story_text = $stateParams.story_text;
 });
 
-
-
-
 // Show all stories from ACI, using paging and StoriesService
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
 
@@ -84,17 +80,27 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
   };
 });
 app.controller('StoryController', function($scope, story) {
-  console.log('StoryController - story: ' + story.title);
+  //console.log('StoryController - story: ' + story.title);
   $scope.story = story;
 });
 
 
+
+// Testing ionic-plugings-keyboard (https://github.com/driftyco/ionic-plugins-keyboard/tree/dev)
+// window.addEventListener('native.keyboardhide', keyboardHideHandler);
+// window.addEventListener('native.keyboardshow', keyboardShowHandler);
+// function keyboardHideHandler(e){alert('JSON.stringify(e): ' + JSON.stringify(e));}
+// function keyboardShowHandler(e){alert('JSON.stringify(e): ' + JSON.stringify(e));}
+
 // Stories Search
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $ionicPlatform) {
+
+  console.log('$scope.search: ' + $scope.query);
+  console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
 
   $scope.performSearch = function() {
     // Cache the search query to add it to the search box when coming back from the detail view
-    $state.current.data.cachedSearchQuery = $scope.search;
+    $state.current.data.cachedSearchQuery = $scope.query;
 
     // Clean stories queues
     $scope.stories = [];
@@ -102,7 +108,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     StoriesSearchService.clearStories();
 
     // Handle StoriesSearchService's searchStories() returned promise
-    StoriesSearchService.searchStories($scope.search).then(
+    StoriesSearchService.searchStories($scope.query).then(
     function(stories) {
       // Remember scroll position when coming back from detail view
       $ionicScrollDelegate.scrollToRememberedPosition();
@@ -121,7 +127,8 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   $scope.searchDidChange = function() {
     // Pending implementation...
-    //console.log('searchDidChange');
+    console.log('searchDidChange');
+    console.log('$scope.query: ' + $scope.query);
   };
 
   $scope.loadMoreStories = function() {
@@ -130,16 +137,33 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.clearSearch = function() {
+    console.log('clearSearch');
     // Bring list to a clean state
+    $scope.query = null;
     $scope.stories = [];
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
   };
 
-  // Get list to previous state using cached search query and stories
+  // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
-    $scope.search = $state.current.data.cachedSearchQuery;
+    $scope.query = $state.current.data.cachedSearchQuery;
     $scope.stories = $state.current.data.cachedStories;
   }
+
+
+  // Helpers
+  $scope.platform = function() {
+    console.log('$ionicPlatform: ' + $ionicPlatform);
+    console.log('$ionicPlatform.type: ' + $ionicPlatform.current);
+  };
+
+
+  $scope.submit = function() {
+    window.cordova.plugins.Keyboard.close();
+    $scope.performSearch();
+  };
+
+  
 
 });
