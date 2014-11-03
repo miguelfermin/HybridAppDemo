@@ -5,63 +5,22 @@
     	<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   	</ion-nav-buttons>
 
-  	<!-- Search bar -->
-	<!-- <ion-header-bar class="bar-light bar-subheader"> -->
-
-		<!-- Search bar --
+  	<!-- 
+  	NOTE: Regarding the search box for the stories (<form> and <input>) for some reason if we dont't explicitly add the ng-controller
+  	to the ion-content, the ng-model won't be binded to the controller. Here's a related discussion in Ionic's forum 
+  	http://forum.ionicframework.com/t/cant-access-form-on-scope/679/8. 
+  	-->
+	<ion-content ng-controller="StoriesSearchController">
+		<!-- Search box -->
 		<div class="bar bar-header item-input-inset">
 			<label class="item-input-wrapper">
 				<i class="icon ion-ios7-search placeholder-icon"></i>
-				<input type="search" placeholder="Search Stories" ng-model="query" ng-change="searchDidChange()">
+				<form ng-submit="submit()">
+					<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
+				</form>
 			</label>
-			<button on-tap="performSearch()" class="button button-clear" >Search</button>
-			<br>
-			<button on-tap="clearSearch()" class="button button-clear" >Clear</button>
-		</div -->
+		</div>
 
-		<!-- Search bar Experiment -->
-		<!--div id="search-box" class="bar bar-header item-input-inset">
-			<div class="item-input-wrapper">
-	          <i class="icon ion-ios7-search placeholder-icon"></i>
-	          <input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
-	          <i class="clear-search icon ion-ios7-close-empty" on-tap="clearSearch()"></i>
-	        </div>
-	        <button on-tap="performSearch()" class="button button-clear" >Search</button>
-	    </div-->
-
-	    <!-- <div id="search-bar" class="bar bar-header item-input-inset">
-		<label class="item-input-wrapper">
-			<i class="icon ion-ios7-search placeholder-icon"></i>
-			<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
-			<i class="clear-search icon ion-ios7-close-empty" on-tap="clearSearch()"></i>
-		</label>
-		<button on-tap="performSearch()" class="button button-clear" >Search</button>
-	</div> -->
-
-	<!-- </ion-header-bar> -->
-
-	
-	<!-- 
-	NOTE: If the search bar is here, it won't scroll with the table cells. If we place it inside the <ion-content> 
-	below it scrolls fine but then the ng-model for the <input> doesn't work
-	-->
-	<ion-header-bar class="bar-light bar-subheader">
-	    <div class="bar bar-header item-input-inset">
-		<label class="item-input-wrapper">
-			<i class="icon ion-ios7-search placeholder-icon"></i>
-
-			<form ng-submit="submit()">
-				<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
-			</form>
-			
-			<!-- <i class="clear-search icon ion-ios7-close-empty" on-tap="clearSearch()"></i> -->
-		</label>
-		<!-- <button on-tap="performSearch()" class="button button-clear" >Search</button> -->
-	</div>
-	</ion-header-bar>
-
-
-	<ion-content>
 		<div class="list">
 			<a class="item my-item"
 			collection-repeat="story in stories"
@@ -77,4 +36,3 @@
 		<!-- <ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%"></ion-infinite-scroll> -->
 	</ion-content>
 </ion-view>
-

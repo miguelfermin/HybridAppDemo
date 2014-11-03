@@ -7,11 +7,7 @@
   padding-bottom: 0;
 }
 
-/*#search-bar {
-  background: none;
-  position: absolute;
-  width: 100%;
-  top: 44px;
-  height: 40px;
-  z-index: 3;
-}*/
+/* To have a mobile-like cursor */
+body {
+  cursor: url('http://ionicframework.com/img/finger.png'), auto;
+}
