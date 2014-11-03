@@ -1,15 +1,11 @@
-
 <ion-view title="Stories">
-
 	<ion-nav-buttons side="left">
     	<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
   	</ion-nav-buttons>
-
   	<!-- 
   	NOTE: Regarding the search box for the stories (<form> and <input>) for some reason if we dont't explicitly add the ng-controller
   	to the ion-content, the ng-model won't be binded to the controller. Here's a related discussion in Ionic's forum 
-  	http://forum.ionicframework.com/t/cant-access-form-on-scope/679/8. 
-  	-->
+  	http://forum.ionicframework.com/t/cant-access-form-on-scope/679/8. -->
 	<ion-content ng-controller="StoriesSearchController">
 		<!-- Search box -->
 		<div class="bar bar-header item-input-inset">
@@ -19,8 +15,12 @@
 					<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
 				</form>
 			</label>
+			<!-- Only show search button to the right of the search box if using a browser. Mobile would use the native keyboard -->
+			<div ng-if="isBrowser()">
+				<button on-tap="performSearch()" class="button button-clear" >Search</button>
+			</div>
 		</div>
-
+		<!-- Stories List -->
 		<div class="list">
 			<a class="item my-item"
 			collection-repeat="story in stories"

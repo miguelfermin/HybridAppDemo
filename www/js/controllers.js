@@ -96,7 +96,6 @@ app.controller('StoryController', function($scope, story) {
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $ionicPlatform) {
 
   console.log('$scope.search: ' + $scope.query);
-  console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
 
   $scope.performSearch = function() {
     // Cache the search query to add it to the search box when coming back from the detail view
@@ -145,23 +144,41 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     StoriesSearchService.clearStories();
   };
 
+  $scope.submit = function() {
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      window.cordova.plugins.Keyboard.close();
+      $scope.performSearch();
+    }
+    else {
+      $scope.performSearch();
+    }
+  };
+
+
+  $scope.isBrowser = function() {
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      // Mobile Device
+      //  NOTE: Need to figure out how to use $cordovaDevice (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
+      // var device = window.cordova.plugins.Device.getDevice();
+      // var cordova = window.cordova.plugins.Device.getCordova();
+      // var model = window.cordova.plugins.Device.getModel();
+      // var platform = window.cordova.plugins.Device.getPlatform(); // This needs more testing
+      // var uuid = window.cordova.plugins.Device.getUUID();
+      // var version = window.cordova.plugins.Device.getVersion();
+      return false;
+    }
+    else {
+      // Browser
+      return true;
+    }
+  };
+
+
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
     $scope.query = $state.current.data.cachedSearchQuery;
     $scope.stories = $state.current.data.cachedStories;
   }
 
-
-  // Helpers
-  $scope.platform = function() {
-    console.log('$ionicPlatform: ' + $ionicPlatform);
-    console.log('$ionicPlatform.type: ' + $ionicPlatform.current);
-  };
-
-
-  $scope.submit = function() {
-    window.cordova.plugins.Keyboard.close();
-    $scope.performSearch();
-  };
-
 });
+
