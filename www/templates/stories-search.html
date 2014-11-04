@@ -17,17 +17,18 @@
 			</label>
 			<!-- Only show search button to the right of the search box if using a browser. Mobile would use the native keyboard -->
 			<div ng-if="isBrowser()">
-				<button on-tap="performSearch()" class="button button-clear" >Search</button>
+				<button on-tap="performSearch()" class="button button-clear">Search</button>
 			</div>
 		</div>
 		<!-- Stories List -->
 		<div class="list">
-			<a class="item my-item"
+			<a class="item item-icon-right my-item"
 			collection-repeat="story in stories"
 			collection-item-height="100" 
 			collection-item-width="'100%'"
 			ng-style="{'line-height' :'100px'}"
-			ui-sref="app.stories-search.detail({story: $index})">
+			ui-sref="app.stories-search.detail({story: $index})">  
+			<i class="icon ion-chevron-right icon-accessory"></i>
 				{{story.title}}
     		</a>
 		</div>
