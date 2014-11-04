@@ -137,10 +137,16 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.clearSearch = function() {
-    console.log('clearSearch');
+    console.log('clearSearch...');
+    console.log('$scope.query ' + $scope.query);
+    console.log('$scope.stories ' + $scope.stories);
+    console.log('StoriesSearchService: ' + StoriesSearchService);
+    console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
+    console.log('$state.current.data.cachedStories: ' +  $state.current.data.cachedStories);
     // Bring list to a clean state
     $scope.query = null;
     $scope.stories = [];
+    $state.current.data.cachedSearchQuery = null;
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
   };
