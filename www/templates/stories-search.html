@@ -7,6 +7,16 @@
   	to the ion-content, the ng-model won't be binded to the controller. Here's a related discussion in Ionic's forum 
   	http://forum.ionicframework.com/t/cant-access-form-on-scope/679/8. -->
 	<ion-content ng-controller="StoriesSearchController">
+
+		<!-- 
+		Pull to refresh. The default behavior is to performa general search. 
+		NOTE: once infinite scrolling and paging is enabled, I'll have to keep track of the search page and position so after the refresh we go back to the same place. -->
+		<ion-refresher 
+		refreshing-icon="ion-loading-d"
+    	pulling-text="Pull to refresh..."
+    	on-refresh="performSearch()">
+  		</ion-refresher>
+
 		<!-- Search box -->
 		<div class="bar bar-header item-input-inset">
 			<label class="item-input-wrapper">
@@ -20,6 +30,7 @@
 				<button on-tap="performSearch()" class="button button-clear">Search</button>
 			</div>
 		</div>
+
 		<!-- Stories List -->
 		<div class="list">
 			<a class="item item-icon-right my-item"
@@ -35,5 +46,6 @@
 
 		<!-- Infinite scrolling -->
 		<!-- <ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%"></ion-infinite-scroll> -->
+
 	</ion-content>
 </ion-view>

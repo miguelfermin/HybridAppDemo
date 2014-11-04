@@ -116,8 +116,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
       $scope.stories = stories;
       $state.current.data.cachedStories = stories;
 
-      // Can now load more content for the infinite scroll
+      // Notify observers we're done loading content
       $scope.$broadcast('scroll.infiniteScrollComplete');
+      $scope.$broadcast('scroll.refreshComplete');
     },
     function(failedInfo) {
       console.log('failedInfo: ' + failedInfo);
