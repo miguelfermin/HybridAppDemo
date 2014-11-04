@@ -25,13 +25,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
   // Fallback state
   $urlRouterProvider.otherwise('/app/stories-search');
 
-
   // Menu (main) state
   $stateProvider.state('app', {
       url: "/app",
       abstract: true,
       templateUrl: "templates/menu.html"
   });
+
+
 
 
   // Stories Search
@@ -65,6 +66,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   });
+
 
 
   // Show all stories from ACI, using paging and StoriesService
@@ -116,3 +118,4 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   });
 });
+

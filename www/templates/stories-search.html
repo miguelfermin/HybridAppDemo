@@ -16,12 +16,12 @@
 	<ion-content ng-controller="StoriesSearchController">
 		<!-- 
 		Pull to refresh. The default behavior is to performa general search. 
-		NOTE: once infinite scrolling and paging is enabled, I'll have to keep track of the search page and position so after the refresh we go back to the same place. -->
+		NOTE: once infinite scrolling and paging is enabled, I'll have to keep track of the search page and position so after the refresh we go back to the same place. --
 		<ion-refresher 
 		refreshing-icon="ion-loading-d"
     	pulling-text="Pull to refresh..."
     	on-refresh="performSearch()">
-  		</ion-refresher>
+  		</ion-refresher-->
 
 		<!-- Search box -->
 		<div class="bar bar-header item-input-inset">
@@ -51,7 +51,7 @@
 		</div>
 
 		<!-- Infinite scrolling -->
-		<!-- <ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%"></ion-infinite-scroll> -->
+		<ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%" ng-if="moreDataCanBeLoaded()"></ion-infinite-scroll>
 
 	</ion-content>
 </ion-view>

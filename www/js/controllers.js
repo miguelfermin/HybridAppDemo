@@ -85,18 +85,20 @@ app.controller('StoryController', function($scope, story) {
 });
 
 
+/**
+ * Stories Search
+ * @param  {[type]} $scope               [description]
+ * @param  {[type]} $ionicScrollDelegate [description]
+ * @param  {[type]} $state               [description]
+ * @param  {[type]} StoriesSearchService [description]
+ * @return {[type]}                      [description]
+ */
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
 
-// Testing ionic-plugings-keyboard (https://github.com/driftyco/ionic-plugins-keyboard/tree/dev)
-// window.addEventListener('native.keyboardhide', keyboardHideHandler);
-// window.addEventListener('native.keyboardshow', keyboardShowHandler);
-// function keyboardHideHandler(e){alert('JSON.stringify(e): ' + JSON.stringify(e));}
-// function keyboardShowHandler(e){alert('JSON.stringify(e): ' + JSON.stringify(e));}
-
-// Stories Search
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $ionicPlatform) {
-
-  console.log('$scope.search: ' + $scope.query);
-
+  /**
+   * [performSearch description]
+   * @return {[type]} [description]
+   */
   $scope.performSearch = function() {
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
@@ -106,36 +108,70 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
 
-    // Handle StoriesSearchService's searchStories() returned promise
-    StoriesSearchService.searchStories($scope.query).then(
-    function(stories) {
-      // Remember scroll position when coming back from detail view
-      $ionicScrollDelegate.scrollToRememberedPosition();
+    $scope.searchStories();
+  };
 
-      // Cache stories
-      $scope.stories = stories;
-      $state.current.data.cachedStories = stories;
-
-      // Notify observers we're done loading content
+  /**
+   * [loadMoreStories description]
+   * @return {[type]} [description]
+   */
+  $scope.loadMoreStories = function() {
+    console.log('loadMoreStories');
+    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
+    $scope.searchStories(function() {
+      StoriesSearchService.incrementPage();
       $scope.$broadcast('scroll.infiniteScrollComplete');
-      $scope.$broadcast('scroll.refreshComplete');
-    },
-    function(failedInfo) {
-      console.log('failedInfo: ' + failedInfo);
     });
   };
 
+  /**
+   * [searchStories description]
+   * @param  {[type]} completionBlock [description]
+   * @return {[type]}                 [description]
+   */
+  $scope.searchStories = function(completionBlock) {
+    // Handle StoriesSearchService's searchStories() returned promise
+    StoriesSearchService.searchStories($scope.query).then(
+
+      // Promise successful
+      function(stories) {
+
+        // Remember scroll position when coming back from detail view
+        $ionicScrollDelegate.scrollToRememberedPosition();
+
+        // Cache stories
+        $scope.stories = stories;
+        $state.current.data.cachedStories = stories;
+
+        // Notify observers we're done loading content
+        //$scope.$broadcast('scroll.refreshComplete');
+
+        // The 'loadMoreStories' function would pass a function to call when the promise is resolved
+        if (completionBlock) {
+          completionBlock();
+        }
+      },
+
+      // Promise failed, handle error
+      function(failedInfo) {
+        console.log('failedInfo: ' + failedInfo);
+      });
+  };
+
+  /**
+   * [searchDidChange description]
+   * @return {[type]} [description]
+   */
   $scope.searchDidChange = function() {
     // Pending implementation...
     console.log('searchDidChange');
     console.log('$scope.query: ' + $scope.query);
   };
 
-  $scope.loadMoreStories = function() {
-    // Pending implementation...
-    //console.log('loadMoreStories');
-  };
-
+  /**
+   * [clearSearch description]
+   * @return {[type]} [description]
+   */
   $scope.clearSearch = function() {
     console.log('clearSearch...');
     console.log('$scope.query ' + $scope.query);
@@ -151,6 +187,10 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     StoriesSearchService.clearStories();
   };
 
+  /**
+   * Perform a search initiated from a native keyboard
+   * @return {[type]} [description]
+   */
   $scope.submit = function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       window.cordova.plugins.Keyboard.close();
@@ -161,11 +201,15 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
-
+  /**
+   * [isBrowser description]
+   * @return {Boolean} [description]
+   */
   $scope.isBrowser = function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Mobile Device
-      //  NOTE: Need to figure out how to use $cordovaDevice (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
+      //  NOTE: Need to figure out how to use $cordovaDevice 
+      //        (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
       // var device = window.cordova.plugins.Device.getDevice();
       // var cordova = window.cordova.plugins.Device.getCordova();
       // var model = window.cordova.plugins.Device.getModel();
@@ -180,6 +224,17 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
+  /**
+   * [moreDataCanBeLoaded description]
+   * @return {[type]} [description]
+   */
+  $scope.moreDataCanBeLoaded = function() {
+    if ($state.current.data.cachedStories.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
@@ -188,4 +243,5 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   }
 
 });
+
 
