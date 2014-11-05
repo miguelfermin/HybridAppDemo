@@ -6,6 +6,198 @@
 //
 var app = angular.module('starter.controllers', []);
 
+/**
+ * Stories Search
+ * @param  {[type]} $scope               [description]
+ * @param  {[type]} $ionicScrollDelegate [description]
+ * @param  {[type]} $state               [description]
+ * @param  {[type]} StoriesSearchService [description]
+ * @return {[type]}                      [description]
+ */
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
+
+  // Use this flag to avoid the infinite scrolling loadMore function call when searching.ye
+  var isPerformingSearch = false;
+
+  /**
+   * [performSearch description]
+   * @return {[type]} [description]
+   */
+  $scope.performSearch = function() {
+
+    isPerformingSearch = true;
+
+    // Cache the search query to add it to the search box when coming back from the detail view
+    $state.current.data.cachedSearchQuery = $scope.query;
+
+    // Clean stories queues
+    $scope.stories = [];
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
+
+    $scope.searchStories(function() {
+      // Reset flag once done searching
+      //isPerformingSearch = false;
+      console.log('inside performSearch completionBlock');
+    });
+  };
+
+
+  /**
+   * [loadMoreStories description]
+   * @return {[type]} [description]
+   */
+  $scope.loadMoreStories = function() {
+    console.log('loadMoreStories');
+    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
+    $scope.searchStories(function() {
+      StoriesSearchService.incrementPage();
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+    });
+  };
+
+  /**
+   * [searchStories description]
+   * @param  {[type]} completionBlock [description]
+   * @return {[type]}                 [description]
+   */
+  $scope.searchStories = function(completionBlock) {
+    // Handle StoriesSearchService's searchStories() returned promise
+    StoriesSearchService.searchStories($scope.query).then(
+
+      // Promise successful
+      function(stories) {
+
+        // Remember scroll position when coming back from detail view
+        $ionicScrollDelegate.scrollToRememberedPosition();
+
+        // Cache stories
+        $scope.stories = stories;
+        $state.current.data.cachedStories = stories;
+
+        // Notify observers we're done loading content
+        //$scope.$broadcast('scroll.refreshComplete'); // Disabled for now until I fix the unwanted infinite scrolling issue.
+
+        // The 'loadMoreStories' function would pass a function to call when the promise is resolved
+        if (completionBlock) {
+          completionBlock();
+        }
+      },
+
+      // Promise failed, handle error
+      function(failedInfo) {
+        console.log('failedInfo: ' + failedInfo);
+      });
+  };
+
+  /**
+   * [searchDidChange description]
+   * @return {[type]} [description]
+   */
+  $scope.searchDidChange = function() {
+    // Pending implementation...
+    console.log('searchDidChange');
+    console.log('$scope.query: ' + $scope.query);
+  };
+
+  /**
+   * [clearSearch description]
+   * @return {[type]} [description]
+   */
+  $scope.clearSearch = function() {
+    // NOTE: This implementation isn't working currently. To investigate later.
+    console.log('clearSearch...');
+    console.log('$scope.query ' + $scope.query);
+    console.log('$scope.stories ' + $scope.stories);
+    console.log('StoriesSearchService: ' + StoriesSearchService);
+    console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
+    console.log('$state.current.data.cachedStories: ' +  $state.current.data.cachedStories);
+    // Bring list to a clean state
+    $scope.query = null;
+    $scope.stories = [];
+    $state.current.data.cachedSearchQuery = null;
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
+  };
+
+  /**
+   * Perform a search initiated from a native keyboard
+   * @return {[type]} [description]
+   */
+  $scope.submit = function() {
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      window.cordova.plugins.Keyboard.close();
+      $scope.performSearch();
+    }
+    else {
+      $scope.performSearch();
+    }
+  };
+
+  /**
+   * Tells if the app is running in a browser (and not a mobile device). It relies in fact that 'window.cordova.plugins' is undefined 
+   * when running the app in a broswer. A more sophisticated method is needed for a production app.
+   * @return {Boolean} true is the app is running in a broswer or false otherwise.
+   */
+  $scope.isBrowser = function() {
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      // Mobile Device
+      //  NOTE: Need to figure out how to use $cordovaDevice 
+      //        (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
+      // var device = window.cordova.plugins.Device.getDevice();
+      // var cordova = window.cordova.plugins.Device.getCordova();
+      // var model = window.cordova.plugins.Device.getModel();
+      // var platform = window.cordova.plugins.Device.getPlatform(); // This needs more testing
+      // var uuid = window.cordova.plugins.Device.getUUID();
+      // var version = window.cordova.plugins.Device.getVersion();
+      return false;
+    }
+    else {
+      // Browser
+      return true;
+    }
+  };
+
+  /**
+   * Determines whether or not the infinite scroll should load more content.
+   * @return {[Boolean]} true if more content for the infinite scroll needs to be loaded or false otherwise.
+   */
+  $scope.moreDataCanBeLoaded = function() {
+
+    console.log('moreDataCanBeLoaded');
+
+    if ($state.current.data.cachedStories.length > 0 && isPerformingSearch === false) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  // Get list to previous state using cached query and stories
+  if ($state.current.data.cachedSearchQuery) {
+    $scope.query = $state.current.data.cachedSearchQuery;
+    $scope.stories = $state.current.data.cachedStories;
+  }
+
+});
+
+
+/**
+ * The Story controller. This controller is shared by StoriesController and StoriesSearchController.
+ * @param  {[Object]} $scope The scope
+ * @param  {[Object]} story  A story object retrieved from the 'StoriesSearchService' service
+ */
+app.controller('StoryController', function($scope, story) {
+  //console.log('StoryController - story: ' + story.title);
+  $scope.story = story;
+});
+
+
+
+
+
+/* NOTE: Please ignore the controller below. They are not being used for now. */
+
 // Search Filter Controller
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
   // Imperfect stories load code, still using it for the show the search filer
@@ -60,7 +252,6 @@ app.controller('SearchFilterDetailCtrl', function($scope, $stateParams) {
   $scope.story_title = $stateParams.story_title;
   $scope.story_text = $stateParams.story_text;
 });
-
 // Show all stories from ACI, using paging and StoriesService
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
 
@@ -79,169 +270,3 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
     });
   };
 });
-app.controller('StoryController', function($scope, story) {
-  //console.log('StoryController - story: ' + story.title);
-  $scope.story = story;
-});
-
-
-/**
- * Stories Search
- * @param  {[type]} $scope               [description]
- * @param  {[type]} $ionicScrollDelegate [description]
- * @param  {[type]} $state               [description]
- * @param  {[type]} StoriesSearchService [description]
- * @return {[type]}                      [description]
- */
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
-
-  /**
-   * [performSearch description]
-   * @return {[type]} [description]
-   */
-  $scope.performSearch = function() {
-    // Cache the search query to add it to the search box when coming back from the detail view
-    $state.current.data.cachedSearchQuery = $scope.query;
-
-    // Clean stories queues
-    $scope.stories = [];
-    $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
-
-    $scope.searchStories();
-  };
-
-  /**
-   * [loadMoreStories description]
-   * @return {[type]} [description]
-   */
-  $scope.loadMoreStories = function() {
-    console.log('loadMoreStories');
-    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
-    $scope.searchStories(function() {
-      StoriesSearchService.incrementPage();
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-    });
-  };
-
-  /**
-   * [searchStories description]
-   * @param  {[type]} completionBlock [description]
-   * @return {[type]}                 [description]
-   */
-  $scope.searchStories = function(completionBlock) {
-    // Handle StoriesSearchService's searchStories() returned promise
-    StoriesSearchService.searchStories($scope.query).then(
-
-      // Promise successful
-      function(stories) {
-
-        // Remember scroll position when coming back from detail view
-        $ionicScrollDelegate.scrollToRememberedPosition();
-
-        // Cache stories
-        $scope.stories = stories;
-        $state.current.data.cachedStories = stories;
-
-        // Notify observers we're done loading content
-        //$scope.$broadcast('scroll.refreshComplete');
-
-        // The 'loadMoreStories' function would pass a function to call when the promise is resolved
-        if (completionBlock) {
-          completionBlock();
-        }
-      },
-
-      // Promise failed, handle error
-      function(failedInfo) {
-        console.log('failedInfo: ' + failedInfo);
-      });
-  };
-
-  /**
-   * [searchDidChange description]
-   * @return {[type]} [description]
-   */
-  $scope.searchDidChange = function() {
-    // Pending implementation...
-    console.log('searchDidChange');
-    console.log('$scope.query: ' + $scope.query);
-  };
-
-  /**
-   * [clearSearch description]
-   * @return {[type]} [description]
-   */
-  $scope.clearSearch = function() {
-    console.log('clearSearch...');
-    console.log('$scope.query ' + $scope.query);
-    console.log('$scope.stories ' + $scope.stories);
-    console.log('StoriesSearchService: ' + StoriesSearchService);
-    console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
-    console.log('$state.current.data.cachedStories: ' +  $state.current.data.cachedStories);
-    // Bring list to a clean state
-    $scope.query = null;
-    $scope.stories = [];
-    $state.current.data.cachedSearchQuery = null;
-    $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
-  };
-
-  /**
-   * Perform a search initiated from a native keyboard
-   * @return {[type]} [description]
-   */
-  $scope.submit = function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      window.cordova.plugins.Keyboard.close();
-      $scope.performSearch();
-    }
-    else {
-      $scope.performSearch();
-    }
-  };
-
-  /**
-   * [isBrowser description]
-   * @return {Boolean} [description]
-   */
-  $scope.isBrowser = function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Mobile Device
-      //  NOTE: Need to figure out how to use $cordovaDevice 
-      //        (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
-      // var device = window.cordova.plugins.Device.getDevice();
-      // var cordova = window.cordova.plugins.Device.getCordova();
-      // var model = window.cordova.plugins.Device.getModel();
-      // var platform = window.cordova.plugins.Device.getPlatform(); // This needs more testing
-      // var uuid = window.cordova.plugins.Device.getUUID();
-      // var version = window.cordova.plugins.Device.getVersion();
-      return false;
-    }
-    else {
-      // Browser
-      return true;
-    }
-  };
-
-  /**
-   * [moreDataCanBeLoaded description]
-   * @return {[type]} [description]
-   */
-  $scope.moreDataCanBeLoaded = function() {
-    if ($state.current.data.cachedStories.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  // Get list to previous state using cached query and stories
-  if ($state.current.data.cachedSearchQuery) {
-    $scope.query = $state.current.data.cachedSearchQuery;
-    $scope.stories = $state.current.data.cachedStories;
-  }
-
-});
-
-

@@ -69,6 +69,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 
 
+  /* NOTE: Please ignore the states below. They are not being used for now. */
+  
   // Show all stories from ACI, using paging and StoriesService
   $stateProvider.state('app.stories', {
     abstract: true,
@@ -118,4 +120,3 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   });
 });
-
