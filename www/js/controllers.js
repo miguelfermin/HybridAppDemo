@@ -16,17 +16,11 @@ var app = angular.module('starter.controllers', []);
  */
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
 
-  // Use this flag to avoid the infinite scrolling loadMore function call when searching.ye
-  var isPerformingSearch = false;
-
   /**
    * [performSearch description]
    * @return {[type]} [description]
    */
   $scope.performSearch = function() {
-
-    isPerformingSearch = true;
-
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
 
@@ -35,13 +29,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
 
-    $scope.searchStories(function() {
-      // Reset flag once done searching
-      //isPerformingSearch = false;
-      console.log('inside performSearch completionBlock');
-    });
+    // Search
+    $scope.searchStories();
   };
-
 
   /**
    * [loadMoreStories description]
@@ -76,7 +66,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
         $state.current.data.cachedStories = stories;
 
         // Notify observers we're done loading content
-        //$scope.$broadcast('scroll.refreshComplete'); // Disabled for now until I fix the unwanted infinite scrolling issue.
+        //$scope.$broadcast('scroll.refreshComplete'); /* Disabled for now until I fix the unwanted infinite scrolling issue. */
 
         // The 'loadMoreStories' function would pass a function to call when the promise is resolved
         if (completionBlock) {
@@ -163,12 +153,11 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[Boolean]} true if more content for the infinite scroll needs to be loaded or false otherwise.
    */
   $scope.moreDataCanBeLoaded = function() {
-
     console.log('moreDataCanBeLoaded');
-
-    if ($state.current.data.cachedStories.length > 0 && isPerformingSearch === false) {
+    if ($state.current.data.cachedStories.length > 0) {
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   };
@@ -178,7 +167,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $scope.query = $state.current.data.cachedSearchQuery;
     $scope.stories = $state.current.data.cachedStories;
   }
-
+  
 });
 
 
@@ -188,7 +177,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
  * @param  {[Object]} story  A story object retrieved from the 'StoriesSearchService' service
  */
 app.controller('StoryController', function($scope, story) {
-  //console.log('StoryController - story: ' + story.title);
   $scope.story = story;
 });
 

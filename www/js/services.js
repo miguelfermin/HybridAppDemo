@@ -45,6 +45,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 	return {
 		clearStories: function () {
 			stories = [];
+			page = 0;
 		},
 		incrementPage: function() {
 			page += 1;
