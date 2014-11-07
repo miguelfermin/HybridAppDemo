@@ -14,17 +14,21 @@ var app = angular.module('starter.controllers', []);
  * @param  {[type]} StoriesSearchService [description]
  * @return {[type]}                      [description]
  */
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, $ionicNavBarDelegate, StoriesSearchService) {
 
   // Show/Hide Search box dynamically
   $scope.isSearchBox = false;
 
   $scope.showSearchBox = function() {
     $scope.isSearchBox = true;
+
+    $ionicNavBarDelegate.setTitle('');
   };
 
   $scope.hideSearchBox = function() {
     $scope.isSearchBox = false;
+
+    $ionicNavBarDelegate.setTitle('Stories');
   };
 
 
