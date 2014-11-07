@@ -1,4 +1,10 @@
 <ion-view title="Story">
+
+	<ion-nav-bar>
+		<ion-nav-back-button class="button icon-left ion-chevron-left button-clear">
+		</ion-nav-back-button>
+	</ion-nav-bar>
+
 	<ion-content class="has-header" padding="true">
 		<!-- Use this template when using the StoriesService -->
 		<div ng-if="story.title">
@@ -13,4 +19,5 @@
 			<p>{{story_text}}</p>
 		</div>
 	</ion-content>
+	
 </ion-view>

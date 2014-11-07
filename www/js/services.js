@@ -50,6 +50,9 @@ app.factory('StoriesSearchService', function($http, $q) {
 		incrementPage: function() {
 			page += 1;
 		},
+		currentPage: function() {
+			return page;
+		},
 		getStory: function(index) {
 			return stories[index];
 		},

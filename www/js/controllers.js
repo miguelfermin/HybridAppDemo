@@ -16,21 +16,38 @@ var app = angular.module('starter.controllers', []);
  */
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
 
+  // Show/Hide Search box dynamically
+  $scope.isSearchBox = false;
+
+  $scope.showSearchBox = function() {
+    $scope.isSearchBox = true;
+  };
+
+  $scope.hideSearchBox = function() {
+    $scope.isSearchBox = false;
+  };
+
+
   /**
    * [performSearch description]
    * @return {[type]} [description]
    */
   $scope.performSearch = function() {
+    console.log('performSearch');
+
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
 
     // Clean stories queues
-    $scope.stories = [];
-    $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
+    // $scope.stories = [];
+    // $state.current.data.cachedStories = [];
+    // StoriesSearchService.clearStories();
+    $scope.clearSearch();
 
     // Search
     $scope.searchStories();
+
+    $scope.clearSearch();
   };
 
   /**
@@ -39,6 +56,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    */
   $scope.loadMoreStories = function() {
     console.log('loadMoreStories');
+
     // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
     $scope.searchStories(function() {
       StoriesSearchService.incrementPage();
@@ -52,12 +70,14 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]}                 [description]
    */
   $scope.searchStories = function(completionBlock) {
+    console.log('searchStories');
+
     // Handle StoriesSearchService's searchStories() returned promise
     StoriesSearchService.searchStories($scope.query).then(
 
       // Promise successful
       function(stories) {
-
+        console.log('Promise successful, stories: ' + stories.length);
         // Remember scroll position when coming back from detail view
         $ionicScrollDelegate.scrollToRememberedPosition();
 
@@ -95,17 +115,8 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]} [description]
    */
   $scope.clearSearch = function() {
-    // NOTE: This implementation isn't working currently. To investigate later.
-    console.log('clearSearch...');
-    console.log('$scope.query ' + $scope.query);
-    console.log('$scope.stories ' + $scope.stories);
-    console.log('StoriesSearchService: ' + StoriesSearchService);
-    console.log('$state.current.data.cachedSearchQuery: ' + $state.current.data.cachedSearchQuery);
-    console.log('$state.current.data.cachedStories: ' +  $state.current.data.cachedStories);
-    // Bring list to a clean state
-    $scope.query = null;
+    console.log('clearSearch................');
     $scope.stories = [];
-    $state.current.data.cachedSearchQuery = null;
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
   };
@@ -115,11 +126,14 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]} [description]
    */
   $scope.submit = function() {
+    console.log('submit');
     if(window.cordova && window.cordova.plugins.Keyboard) {
+      console.log('submit tapped...if');
       window.cordova.plugins.Keyboard.close();
       $scope.performSearch();
     }
     else {
+      console.log('submit tapped...else');
       $scope.performSearch();
     }
   };
@@ -153,7 +167,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[Boolean]} true if more content for the infinite scroll needs to be loaded or false otherwise.
    */
   $scope.moreDataCanBeLoaded = function() {
-    console.log('moreDataCanBeLoaded');
+    //console.log('moreDataCanBeLoaded');
     if ($state.current.data.cachedStories.length > 0) {
       return true;
     }
@@ -167,7 +181,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $scope.query = $state.current.data.cachedSearchQuery;
     $scope.stories = $state.current.data.cachedStories;
   }
-  
+
 });
 
 
@@ -182,9 +196,7 @@ app.controller('StoryController', function($scope, story) {
 
 
 
-
-
-/* NOTE: Please ignore the controller below. They are not being used for now. */
+/* NOTE: Please ignore the controllers below. They are not being used for now. */
 
 // Search Filter Controller
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
