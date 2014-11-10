@@ -16,8 +16,14 @@ var app = angular.module('starter.controllers', []);
  */
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, $ionicNavBarDelegate, StoriesSearchService) {
 
+  // Update view's title
   $ionicNavBarDelegate.setTitle('Stories');
-  
+
+  // 
+  $scope.stories = function() {
+    return $state.current.data.cachedStories;
+  };
+
   // Show/Hide Search box dynamically
   $scope.isSearchBox = false;
 
@@ -37,21 +43,17 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]} [description]
    */
   $scope.performSearch = function() {
-    console.log('performSearch');
+    //console.log('performSearch');
 
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
 
     // Clean stories queues
-    // $scope.stories = [];
-    // $state.current.data.cachedStories = [];
-    // StoriesSearchService.clearStories();
-    $scope.clearSearch();
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
 
     // Search
     $scope.searchStories();
-
-    $scope.clearSearch();
   };
 
   /**
@@ -59,7 +61,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]} [description]
    */
   $scope.loadMoreStories = function() {
-    console.log('loadMoreStories');
+    //console.log('loadMoreStories');
 
     // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
     $scope.searchStories(function() {
@@ -81,12 +83,12 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
       // Promise successful
       function(stories) {
-        console.log('Promise successful, stories: ' + stories.length);
+        console.log('Promise successful, stories: ');
+
         // Remember scroll position when coming back from detail view
         $ionicScrollDelegate.scrollToRememberedPosition();
 
         // Cache stories
-        $scope.stories = stories;
         $state.current.data.cachedStories = stories;
 
         // Notify observers we're done loading content
@@ -110,8 +112,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    */
   $scope.searchDidChange = function() {
     // Pending implementation...
-    console.log('searchDidChange');
-    console.log('$scope.query: ' + $scope.query);
+    console.log('searchDidChange, $scope.query: ' + $scope.query);
   };
 
   /**
@@ -119,8 +120,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
    * @return {[type]} [description]
    */
   $scope.clearSearch = function() {
-    console.log('clearSearch................');
-    $scope.stories = [];
+    //console.log('clearSearch................');
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
   };
@@ -183,7 +183,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
     $scope.query = $state.current.data.cachedSearchQuery;
-    $scope.stories = $state.current.data.cachedStories;
   }
 
 });
