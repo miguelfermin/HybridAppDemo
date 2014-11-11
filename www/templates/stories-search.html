@@ -5,10 +5,11 @@
 		<!-- Search bar -->
 		<label class="item-input-wrapper" ng-show="isSearchBox">
 			<i class="icon ion-ios7-search placeholder-icon"></i>
-			<form ng-submit="submit()">
+			<form ng-submit="submit()" class="search-bar">
 				<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
 			</form>
 		</label>
+
 		<button 
 		ng-show="isSearchBox"
 		class="button button-icon "
@@ -26,11 +27,12 @@
 
 	</ion-nav-bar>
 
+
+
   	<!-- 
   	NOTE: Regarding the search box for the stories (<form> and <input>) for some reason if we dont't explicitly add the ng-controller
   	to the ion-content, the ng-model won't be binded to the controller. Here's a related discussion in Ionic's forum 
   	http://forum.ionicframework.com/t/cant-access-form-on-scope/679/8. -->
-	<!-- <ion-content ng-controller="StoriesSearchController"> -->
 	<ion-content>
 		<!-- 
 		Pull to refresh. The default behavior is to performa general search. 
@@ -56,6 +58,5 @@
 
 		<!-- Infinite scrolling -->
 		<ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%" ng-if="moreDataCanBeLoaded()"></ion-infinite-scroll>
-
 	</ion-content>
 </ion-view>

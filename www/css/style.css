@@ -11,3 +11,8 @@
 body {
   cursor: url('http://ionicframework.com/img/finger.png'), auto;
 }
+
+/* To have the search bar width strecth to the side of its parent */
+.search-bar {
+  width: 100%;
+}
