@@ -19,13 +19,17 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   // Update view's title
   $ionicNavBarDelegate.setTitle('Stories');
 
-  // 
+  $scope.isSearchBox = false;
+
+  // Get list to previous state using cached query and stories
+  if ($state.current.data.cachedSearchQuery) {
+    $scope.query = $state.current.data.cachedSearchQuery;
+  }
+
   $scope.stories = function() {
+    // Stories to use in the view
     return $state.current.data.cachedStories;
   };
-
-  // Show/Hide Search box dynamically
-  $scope.isSearchBox = false;
 
   $scope.showSearchBox = function() {
     $scope.isSearchBox = true;
@@ -37,13 +41,8 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $ionicNavBarDelegate.setTitle('Stories');
   };
 
-
-  /**
-   * [performSearch description]
-   * @return {[type]} [description]
-   */
   $scope.performSearch = function() {
-    //console.log('performSearch');
+    console.log('performSearch');
 
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
@@ -53,16 +52,11 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     StoriesSearchService.clearStories();
 
     // Search
-    $scope.searchStories();
+    $scope.searchStories(function() {});
   };
 
-  /**
-   * [loadMoreStories description]
-   * @return {[type]} [description]
-   */
   $scope.loadMoreStories = function() {
-    //console.log('loadMoreStories');
-
+    console.log('loadMoreStories');
     // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
     $scope.searchStories(function() {
       StoriesSearchService.incrementPage();
@@ -70,11 +64,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     });
   };
 
-  /**
-   * [searchStories description]
-   * @param  {[type]} completionBlock [description]
-   * @return {[type]}                 [description]
-   */
   $scope.searchStories = function(completionBlock) {
     console.log('searchStories');
 
@@ -83,7 +72,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
       // Promise successful
       function(stories) {
-        console.log('Promise successful, stories: ');
+        console.log('Promise successful' + '\n ');
 
         // Remember scroll position when coming back from detail view
         $ionicScrollDelegate.scrollToRememberedPosition();
@@ -106,48 +95,32 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
       });
   };
 
-  /**
-   * [searchDidChange description]
-   * @return {[type]} [description]
-   */
   $scope.searchDidChange = function() {
     // Pending implementation...
     console.log('searchDidChange, $scope.query: ' + $scope.query);
   };
 
-  /**
-   * [clearSearch description]
-   * @return {[type]} [description]
-   */
   $scope.clearSearch = function() {
     //console.log('clearSearch................');
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
   };
 
-  /**
-   * Perform a search initiated from a native keyboard
-   * @return {[type]} [description]
-   */
   $scope.submit = function() {
-    console.log('submit');
     if(window.cordova && window.cordova.plugins.Keyboard) {
-      console.log('submit tapped...if');
+      //console.log('submit tapped...if');
       window.cordova.plugins.Keyboard.close();
       $scope.performSearch();
     }
     else {
-      console.log('submit tapped...else');
+      //console.log('submit tapped...else');
       $scope.performSearch();
     }
   };
 
-  /**
-   * Tells if the app is running in a browser (and not a mobile device). It relies in fact that 'window.cordova.plugins' is undefined 
-   * when running the app in a broswer. A more sophisticated method is needed for a production app.
-   * @return {Boolean} true is the app is running in a broswer or false otherwise.
-   */
   $scope.isBrowser = function() {
+    // Tells if the app is running in a browser (and not a mobile device). It relies in fact that 'window.cordova.plugins' is undefined 
+    // when running the app in a broswer. A more sophisticated method is needed for a production app.
     if(window.cordova && window.cordova.plugins.Keyboard) {
       // Mobile Device
       //  NOTE: Need to figure out how to use $cordovaDevice 
@@ -166,12 +139,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
-  /**
-   * Determines whether or not the infinite scroll should load more content.
-   * @return {[Boolean]} true if more content for the infinite scroll needs to be loaded or false otherwise.
-   */
   $scope.moreDataCanBeLoaded = function() {
-    //console.log('moreDataCanBeLoaded');
+    // Determines whether or not the infinite scroll should load more content.
+    console.log('moreDataCanBeLoaded');
     if ($state.current.data.cachedStories.length > 0) {
       return true;
     }
@@ -180,19 +150,10 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
-  // Get list to previous state using cached query and stories
-  if ($state.current.data.cachedSearchQuery) {
-    $scope.query = $state.current.data.cachedSearchQuery;
-  }
-
 });
 
 
-/**
- * The Story controller. This controller is shared by StoriesController and StoriesSearchController.
- * @param  {[Object]} $scope The scope
- * @param  {[Object]} story  A story object retrieved from the 'StoriesSearchService' service
- */
+// The Story controller. This controller is shared by StoriesController and StoriesSearchController.
 app.controller('StoryController', function($scope, story) {
   $scope.story = story;
 });
