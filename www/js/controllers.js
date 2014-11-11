@@ -26,6 +26,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $scope.query = $state.current.data.cachedSearchQuery;
   }
 
+
   $scope.stories = function() {
     // Stories to use in the view
     return $state.current.data.cachedStories;
@@ -41,31 +42,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $ionicNavBarDelegate.setTitle('Stories');
   };
 
-  $scope.performSearch = function() {
-    console.log('performSearch');
-
-    // Cache the search query to add it to the search box when coming back from the detail view
-    $state.current.data.cachedSearchQuery = $scope.query;
-
-    // Clean stories queues
-    $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
-
-    // Search
-    $scope.searchStories(function() {});
-  };
-
-  $scope.loadMoreStories = function() {
-    console.log('loadMoreStories');
-    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
-    $scope.searchStories(function() {
-      StoriesSearchService.incrementPage();
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-    });
-  };
 
   $scope.searchStories = function(completionBlock) {
-    console.log('searchStories');
+    console.log('searchStories - the service');
 
     // Handle StoriesSearchService's searchStories() returned promise
     StoriesSearchService.searchStories($scope.query).then(
@@ -94,6 +73,57 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
         console.log('failedInfo: ' + failedInfo);
       });
   };
+
+
+  var isSearching = false;
+
+  $scope.performSearch = function() {
+    console.log('performSearch');
+
+    // Cache the search query to add it to the search box when coming back from the detail view
+    $state.current.data.cachedSearchQuery = $scope.query;
+
+    // Clean stories queues
+    $state.current.data.cachedStories = [];
+    StoriesSearchService.clearStories();
+
+    //$scope.isSearching = true;
+    isSearching = true;
+    console.log('performSearch, isSearching = ' + isSearching);
+    
+    // Search
+    $scope.searchStories(function() {
+
+      //isSearching = false;
+      console.log('inside performSearch/completionBlock before 6s timer, isSearching = ' + isSearching + '\n ');
+
+      setTimeout(function() {
+        console.log('AFTER 6S TIMER....performSearch/ before setting it back to false, isSearching = ' + isSearching);
+        isSearching = false;
+        console.log('AFTER 6S TIMER....performSearch/ after setting it back to false, isSearching = ' + isSearching);
+      }, 6000);
+    });
+  };
+
+  $scope.loadMoreStories = function() {
+    //console.log('loadMoreStories');
+    console.log('loadMoreStories, isSearching = ' + isSearching);
+    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
+    
+
+    if (isSearching === false) {
+      $scope.searchStories(function() {
+        StoriesSearchService.incrementPage();
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      });
+
+    }
+    else {
+      //console.log('loadMoreStories, isSearching-X = ' + isSearching);
+    }
+    
+  };
+
 
   $scope.searchDidChange = function() {
     // Pending implementation...
@@ -141,7 +171,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   $scope.moreDataCanBeLoaded = function() {
     // Determines whether or not the infinite scroll should load more content.
-    console.log('moreDataCanBeLoaded');
+    
+    //console.log('\n ' + 'moreDataCanBeLoaded' + '\n ');
+
     if ($state.current.data.cachedStories.length > 0) {
       return true;
     }

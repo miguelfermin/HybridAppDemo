@@ -2,25 +2,20 @@
 
 	<ion-nav-bar class="item-input-inset" ng-controller="StoriesSearchController">
 
+		<!-- Search bar -->
 		<label class="item-input-wrapper" ng-show="isSearchBox">
 			<i class="icon ion-ios7-search placeholder-icon"></i>
-
 			<form ng-submit="submit()">
 				<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
 			</form>
 		</label>
-
 		<button 
 		ng-show="isSearchBox"
 		class="button button-icon "
 		on-tap="hideSearchBox()">Cancel
 		</button>
 
-  		<!-- <div class="bar bar-header" ng-hide="isSearchBox">
-			<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  			<button class="button button-icon icon ion-ios7-search" on-tap="showSearchBox()"></button>
-		</div> -->
-
+		<!-- Bar buttons -->
 		<ion-nav-buttons side="left" >
     	<button menu-toggle="left" class="button button-icon icon ion-navicon" ng-hide="isSearchBox"></button>
   		</ion-nav-buttons>
@@ -30,26 +25,6 @@
   		</ion-nav-buttons>
 
 	</ion-nav-bar>
-
-<!-- <div ng-show="searchBar">
-	<ion-header-bar class="bar-assertive item-input-inset bar-subheader">
-	<label class="item-input-wrapper">
-			<i class="icon ion-ios7-search placeholder-icon"></i>
-			<form ng-submit="submit()">
-			<input type="search" placeholder="Search" ng-model="query" ng-change="searchDidChange()">
-			</form>
-		</label>
-	</ion-header-bar>
-</div> -->
-
-	<!-- <ion-nav-buttons side="right">
-		<button class="button button-icon icon ion-ios7-search" on-tap="showSearchBox()"></button>
-  	</ion-nav-buttons>
-
-	<ion-nav-buttons side="left">
-    	<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  	</ion-nav-buttons> -->
-
 
   	<!-- 
   	NOTE: Regarding the search box for the stories (<form> and <input>) for some reason if we dont't explicitly add the ng-controller
@@ -84,4 +59,3 @@
 
 	</ion-content>
 </ion-view>
-
