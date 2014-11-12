@@ -6,15 +6,7 @@
 //
 var app = angular.module('starter.controllers', []);
 
-// Experimental code
-// console.log('$location.path() ' + $location.path());
-// $location.search( { q: $scope.query } );
-// $scope.$on('$locationChangeSuccess', function() {
-//   console.log('locationChangeSuccess');
-//   updateSearchFromURL();
-// });
-
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $interval) {
 
   // Good debugging techinque to check if more then one controller is being used.
   var controllerID = Math.random();
@@ -29,24 +21,29 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     return $state.current.data.cachedStories;
   };
 
-  $scope.searchStories = function(query, completionBlock) {
-    
-    console.log('searchStories - the service', controllerID);
-    console.log('searchStories - query', query);
+  $scope.searchStories = function(completionBlock) {
+    // console.log('searchStories - the service', controllerID);
+    // console.log('searchStories - $scope.query', $scope.query);
 
     // Handle StoriesSearchService's searchStories() returned promise
-    StoriesSearchService.searchStories(query).then(
+    StoriesSearchService.searchStories($scope.query).then(
 
       // Promise successful
       function(stories) {
-        console.log('Promise successful' + '\n ');
+        console.log('Promise resolved!' + '\n ');
 
         // Remember scroll position when coming back from detail view
         $ionicScrollDelegate.scrollToRememberedPosition();
 
         // Cache stories
-        $state.current.data.cachedStories = stories;
+        //$state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
+        stories.forEach(function (story) {
+          $state.current.data.cachedStories.push(story);
+        });
+        
+        StoriesSearchService.clearStories();
 
+        
         // Notify observers we're done loading content
         //$scope.$broadcast('scroll.refreshComplete'); /* Disabled for now until I fix the unwanted infinite scrolling issue. */
 
@@ -54,6 +51,8 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
         if (completionBlock) {
           completionBlock();
         }
+
+        StoriesSearchService.incrementPage();
       },
 
       // Promise failed, handle error
@@ -64,7 +63,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   var isSearching = false;
 
-  $scope.performSearch = function(query) {
+  $scope.performSearch = function() {
     console.log('performSearch');
 
     // Cache the search query to add it to the search box when coming back from the detail view
@@ -72,32 +71,30 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
     // Clean stories queues
     $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
+    StoriesSearchService.clearAll();
 
-    // Search
+    // This will prevent the infiniteScroll from loading more stories while searching.
     isSearching = true;
 
-    $scope.searchStories(query, function() {
-      setTimeout(function() {
+    $scope.searchStories(function() {
+      // The moreDataCanBeLoaded() function is called multiple times during this operation, 
+      // so we need to delay setting the "isSearching" flag to false, otherwise it would be ineffective.
+      $interval(function() {
         isSearching = false;
-      }, 1000);
+        // This is important, we need to broadcast that we're done here in order to trigger
+        // another call to moreDataCanBeLoaded() and keep the infinite scroll going
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      }, 2000,1);
     });
   };
 
   $scope.loadMoreStories = function() {
     console.log('loadMoreStories',isSearching);
-
     if (isSearching === false) {
       $scope.searchStories(function() {
-        StoriesSearchService.incrementPage();
         $scope.$broadcast('scroll.infiniteScrollComplete');
       });
     }
-
-    // $scope.searchStories(function(query) {
-    //   StoriesSearchService.incrementPage();
-    //   $scope.$broadcast('scroll.infiniteScrollComplete');
-    // });
   };
 
   $scope.isBrowser = function() {
@@ -122,33 +119,31 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    console.log('moreDataCanBeLoaded');
+    //console.log('moreDataCanBeLoaded');
     if ($state.current.data.cachedStories.length > 0) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   };
 
   // Listen to events from search bar
   $scope.$on('searchSubmitted', function(event, query) {
-    console.log('searchSubmitted, query: ',query);
-    $scope.performSearch(query);
+    //console.log('searchSubmitted, query: ',query);
+    $scope.query = query;
+    $scope.performSearch();
   });
 
-  $scope.$on('searchQueryChanged', function(event, query) {
-    console.log('searchQueryChanged, query: ',query);
-  });
-
+  // Not needed currently
+  // $scope.$on('searchQueryChanged', function(event, query) {
+  //   console.log('searchQueryChanged, query: ',query);
+  // });
 });
 
-app.controller('SearchBarController', function($scope, $state, $ionicNavBarDelegate, StoriesSearchService, $location, $rootScope) {
+app.controller('SearchBarController', function($scope, $state, $ionicNavBarDelegate, $location, $rootScope) {
 
-  // Update view's title
   $ionicNavBarDelegate.setTitle('Stories');
 
-  // Determine whether the search bar is visible or hidden
   $scope.isSearchBox = false;
 
   $scope.showSearchBox = function() {
@@ -178,23 +173,24 @@ app.controller('SearchBarController', function($scope, $state, $ionicNavBarDeleg
   };
 
   $scope.clearSearch = function() {
-    //console.log('clearSearch................');
-    //$state.current.data.cachedStories = [];
-    //StoriesSearchService.clearStories();
   };
-
 });
 
-// The Story controller. This controller is shared by StoriesController and StoriesSearchController.
 app.controller('StoryController', function($scope, story) {
   $scope.story = story;
 });
 
 
 
-/* NOTE: Please ignore the controllers below. They are not being used for now. */
+// Experimental code
+// console.log('$location.path() ' + $location.path());
+// $location.search( { q: $scope.query } );
+// $scope.$on('$locationChangeSuccess', function() {
+//   console.log('locationChangeSuccess');
+//   updateSearchFromURL();
+// });
 
-// Search Filter Controller
+/* NOTE: Please ignore the controllers below. They are not being used for now. */
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
   // Imperfect stories load code, still using it for the show the search filer
   $scope.numberOfPages  = 0;
@@ -248,7 +244,6 @@ app.controller('SearchFilterDetailCtrl', function($scope, $stateParams) {
   $scope.story_title = $stateParams.story_title;
   $scope.story_text = $stateParams.story_text;
 });
-// Show all stories from ACI, using paging and StoriesService
 app.controller('StoriesController', function($scope, $ionicScrollDelegate, StoriesService) {
 
   $scope.loadMoreStories = function() {

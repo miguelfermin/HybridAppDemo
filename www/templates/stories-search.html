@@ -1,4 +1,4 @@
-<ion-view> <!-- title="Stories" -->
+<ion-view>
 
 	<ion-nav-bar class="item-input-inset" ng-controller="SearchBarController">
 
@@ -52,7 +52,7 @@
 			ng-style="{'line-height' :'100px'}"
 			ui-sref="app.stories-search.detail({story: $index})">  
 			<i class="icon ion-chevron-right icon-accessory"></i>
-				{{story.title}}
+				{{story.number}}. {{story.title}}
     		</a>
 		</div>
 
