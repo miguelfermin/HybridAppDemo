@@ -138,18 +138,17 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
 app.controller('SearchBarController', function($scope, $state, $ionicNavBarDelegate, $location, $rootScope) {
 
-  $ionicNavBarDelegate.setTitle('Stories');
-
-  $scope.isSearchBox = false;
+  //$ionicNavBarDelegate.setTitle('Stories');
+  $scope.isSearchBox = true;
 
   $scope.showSearchBox = function() {
     $scope.isSearchBox = true;
-    $ionicNavBarDelegate.setTitle('');
+    //$ionicNavBarDelegate.setTitle('');
   };
 
   $scope.hideSearchBox = function() {
     $scope.isSearchBox = false;
-    $ionicNavBarDelegate.setTitle('Stories');
+    //$ionicNavBarDelegate.setTitle('Stories');
   };
 
   // Delegate search querie
