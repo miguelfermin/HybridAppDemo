@@ -28,7 +28,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 							alert('DUPLICATE STORY WITH ID: ',story.id, 'and: ', hit.$id);
 						}
 					});
-					
+
 					// Create literal story object and add to stories array
 					var story = {
 						id: hit.$id,
@@ -62,6 +62,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 			page = 0;
 			stories = [];
 			cachedStories = [];
+			storyCounter = 0;
 		},
 		incrementPage: function() {
 			page += 1;
