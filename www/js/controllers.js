@@ -31,10 +31,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
       // Promise successful
       function(stories) {
         console.log('Promise resolved!' + '\n ');
-
-        // Remember scroll position when coming back from detail view
-        $ionicScrollDelegate.scrollToRememberedPosition();
-
         // Cache stories
         //$state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
         stories.forEach(function (story) {
