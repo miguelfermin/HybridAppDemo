@@ -6,48 +6,36 @@
 //
 var app = angular.module('starter.controllers', []);
 
-/**
- * Stories Search
- * @param  {[type]} $scope               [description]
- * @param  {[type]} $ionicScrollDelegate [description]
- * @param  {[type]} $state               [description]
- * @param  {[type]} StoriesSearchService [description]
- * @return {[type]}                      [description]
- */
-app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, $ionicNavBarDelegate, StoriesSearchService) {
+// Experimental code
+// console.log('$location.path() ' + $location.path());
+// $location.search( { q: $scope.query } );
+// $scope.$on('$locationChangeSuccess', function() {
+//   console.log('locationChangeSuccess');
+//   updateSearchFromURL();
+// });
 
-  // Update view's title
-  $ionicNavBarDelegate.setTitle('Stories');
+app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService) {
 
-  $scope.isSearchBox = false;
+  // Good debugging techinque to check if more then one controller is being used.
+  var controllerID = Math.random();
 
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
     $scope.query = $state.current.data.cachedSearchQuery;
   }
 
-
   $scope.stories = function() {
     // Stories to use in the view
     return $state.current.data.cachedStories;
   };
 
-  $scope.showSearchBox = function() {
-    $scope.isSearchBox = true;
-    $ionicNavBarDelegate.setTitle('');
-  };
-
-  $scope.hideSearchBox = function() {
-    $scope.isSearchBox = false;
-    $ionicNavBarDelegate.setTitle('Stories');
-  };
-
-
-  $scope.searchStories = function(completionBlock) {
-    console.log('searchStories - the service');
+  $scope.searchStories = function(query, completionBlock) {
+    
+    console.log('searchStories - the service', controllerID);
+    console.log('searchStories - query', query);
 
     // Handle StoriesSearchService's searchStories() returned promise
-    StoriesSearchService.searchStories($scope.query).then(
+    StoriesSearchService.searchStories(query).then(
 
       // Promise successful
       function(stories) {
@@ -74,10 +62,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
       });
   };
 
-
   var isSearching = false;
 
-  $scope.performSearch = function() {
+  $scope.performSearch = function(query) {
     console.log('performSearch');
 
     // Cache the search query to add it to the search box when coming back from the detail view
@@ -87,65 +74,30 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $state.current.data.cachedStories = [];
     StoriesSearchService.clearStories();
 
-    //$scope.isSearching = true;
-    isSearching = true;
-    console.log('performSearch, isSearching = ' + isSearching);
-    
     // Search
-    $scope.searchStories(function() {
+    isSearching = true;
 
-      //isSearching = false;
-      console.log('inside performSearch/completionBlock before 6s timer, isSearching = ' + isSearching + '\n ');
-
+    $scope.searchStories(query, function() {
       setTimeout(function() {
-        console.log('AFTER 6S TIMER....performSearch/ before setting it back to false, isSearching = ' + isSearching);
         isSearching = false;
-        console.log('AFTER 6S TIMER....performSearch/ after setting it back to false, isSearching = ' + isSearching);
-      }, 6000);
+      }, 1000);
     });
   };
 
   $scope.loadMoreStories = function() {
-    //console.log('loadMoreStories');
-    console.log('loadMoreStories, isSearching = ' + isSearching);
-    // Use 'StoriesSearchService' to load the stories async, pass a completionBlock to be executed when the service's promise is resolved.
-    
+    console.log('loadMoreStories',isSearching);
 
     if (isSearching === false) {
       $scope.searchStories(function() {
         StoriesSearchService.incrementPage();
         $scope.$broadcast('scroll.infiniteScrollComplete');
       });
-
     }
-    else {
-      //console.log('loadMoreStories, isSearching-X = ' + isSearching);
-    }
-    
-  };
 
-
-  $scope.searchDidChange = function() {
-    // Pending implementation...
-    console.log('searchDidChange, $scope.query: ' + $scope.query);
-  };
-
-  $scope.clearSearch = function() {
-    //console.log('clearSearch................');
-    $state.current.data.cachedStories = [];
-    StoriesSearchService.clearStories();
-  };
-
-  $scope.submit = function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      //console.log('submit tapped...if');
-      window.cordova.plugins.Keyboard.close();
-      $scope.performSearch();
-    }
-    else {
-      //console.log('submit tapped...else');
-      $scope.performSearch();
-    }
+    // $scope.searchStories(function(query) {
+    //   StoriesSearchService.incrementPage();
+    //   $scope.$broadcast('scroll.infiniteScrollComplete');
+    // });
   };
 
   $scope.isBrowser = function() {
@@ -170,10 +122,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    // Determines whether or not the infinite scroll should load more content.
-    
-    //console.log('\n ' + 'moreDataCanBeLoaded' + '\n ');
-
+    console.log('moreDataCanBeLoaded');
     if ($state.current.data.cachedStories.length > 0) {
       return true;
     }
@@ -182,8 +131,59 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
+  // Listen to events from search bar
+  $scope.$on('searchSubmitted', function(event, query) {
+    console.log('searchSubmitted, query: ',query);
+    $scope.performSearch(query);
+  });
+
+  $scope.$on('searchQueryChanged', function(event, query) {
+    console.log('searchQueryChanged, query: ',query);
+  });
+
 });
 
+app.controller('SearchBarController', function($scope, $state, $ionicNavBarDelegate, StoriesSearchService, $location, $rootScope) {
+
+  // Update view's title
+  $ionicNavBarDelegate.setTitle('Stories');
+
+  // Determine whether the search bar is visible or hidden
+  $scope.isSearchBox = false;
+
+  $scope.showSearchBox = function() {
+    $scope.isSearchBox = true;
+    $ionicNavBarDelegate.setTitle('');
+  };
+
+  $scope.hideSearchBox = function() {
+    $scope.isSearchBox = false;
+    $ionicNavBarDelegate.setTitle('Stories');
+  };
+
+  // Delegate search querie
+  $scope.searchDidChange = function() {
+    // Tell the controller that the query changed
+    $rootScope.$broadcast('searchQueryChanged', $scope.query);
+  };
+
+  $scope.submit = function() {
+    // Tell the controller when the user submits the form (tap the search button)
+    $rootScope.$broadcast('searchSubmitted', $scope.query);
+
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      // Hide keyboard on mobile devices
+      window.cordova.plugins.Keyboard.close();
+    }
+  };
+
+  $scope.clearSearch = function() {
+    //console.log('clearSearch................');
+    //$state.current.data.cachedStories = [];
+    //StoriesSearchService.clearStories();
+  };
+
+});
 
 // The Story controller. This controller is shared by StoriesController and StoriesSearchController.
 app.controller('StoryController', function($scope, story) {
