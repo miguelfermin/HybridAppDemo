@@ -1,6 +1,9 @@
-<ion-view>
-
+<ion-view title="Stories">
 	<ion-nav-bar class="item-input-inset" ng-controller="SearchBarController">
+		<!-- IMPORTANT: In order to support dynamically changing navigation bar buttons and search bar the DOM is being updated in
+		 				SearchBarController, so the order in which the elements are layed out below matters. Any change could result 
+		 				in breaking the navigation bar.
+		-->
 		<!-- Search bar -->
 		<label class="item-input-wrapper" ng-show="isSearchBox">
 			<i class="icon ion-ios7-search placeholder-icon"></i>
@@ -8,9 +11,8 @@
 				<input type="search" placeholder="Search stories" ng-model="query" ng-change="searchDidChange()">
 			</form>
 		</label>
-		<button ng-show="isSearchBox" class="button button-icon " on-tap="hideSearchBox()">Cancel</button>
-
-		<!-- Bar buttons  ng-hide="isSearchBox" -->
+		<button class="button button-icon " on-tap="hideSearchBox()" ng-show="isSearchBox">Cancel</button>
+		<!-- Bar buttons -->
   		<div ng-if="!isSearchBox">
 			<ion-nav-buttons side="left" >
 	    	<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
@@ -21,7 +23,7 @@
 	  		</ion-nav-buttons>
   		</div>
 	</ion-nav-bar>
-	
+	<!-- List of stories -->
 	<ion-content>
 		<!-- 
 		Pull to refresh. The default behavior is to performa general search. 
@@ -49,5 +51,3 @@
 		<ion-infinite-scroll on-infinite="loadMoreStories()" distance="5%" ng-if="moreDataCanBeLoaded()"></ion-infinite-scroll>
 	</ion-content>
 </ion-view>
-
-
