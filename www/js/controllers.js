@@ -131,25 +131,23 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   });
 });
 
-app.controller('SearchBarController', function($scope, $location, $rootScope, $ionicNavBarDelegate) {
-
-  $scope.isSearchBox = false;
+app.controller('SearchBarController', function($scope, $location, $rootScope, $state) {
   
   // Use jQuery to get the ion-view's h1 element covering up the search bar
   var $ionViewTitleElement = $('ion-view ion-nav-bar h1');
 
+  $scope.isSearchBarShown = function() {
+    return $state.current.data.isSearchBarShown;
+  };
+
   $scope.showSearchBox = function() {
-    console.log('$scope.showSearchBox','\n ');
-    $scope.isSearchBox = true;
     $ionViewTitleElement.hide();
-    $ionicNavBarDelegate.setTitle('');
+    $state.current.data.isSearchBarShown = true;
   };
 
   $scope.hideSearchBox = function() {
-    console.log('$scope.hideSearchBox','\n ');
-    $scope.isSearchBox = false;
     $ionViewTitleElement.show();
-    $ionicNavBarDelegate.setTitle('Stories');
+    $state.current.data.isSearchBarShown = false;
   };
 
   // Delegate search querie
@@ -167,6 +165,7 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $i
       window.cordova.plugins.Keyboard.close();
     }
   };
+
 });
 
 app.controller('StoryController', function($scope, story) {

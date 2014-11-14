@@ -52,7 +52,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: 'StoriesSearchController',
     data: {
       cachedSearchQuery: null,
-      cachedStories: []
+      cachedStories: [],
+      isSearchBarShown: false
     }
   });
 
