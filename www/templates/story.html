@@ -10,13 +10,13 @@
 		<div ng-if="story.title">
 			<h3> {{story.title}} </h3>
 			<br>
-			<p>  {{story.text}} </p>
+			<p ng-bind-html="story.text"></p>
 		</div>
 		<!-- Use this template when not using the StoriesService. Note: once the service is fully fixed and tested this template will be deleted -->
 		<div ng-if="story_title">
 			<h3>{{story_title}}</h3>
 			<br>
-			<p>{{story_text}}</p>
+			<p ng-bind-html="story.text"></p>
 		</div>
 	</ion-content>
 	
