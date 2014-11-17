@@ -1,23 +1,18 @@
 <ion-view title="Stories">
 	<ion-nav-bar class="item-input-inset" ng-controller="SearchBarController">
-		<!-- IMPORTANT: In order to support dynamically changing navigation bar buttons and search bar the DOM is being updated in
-		 				SearchBarController, so the order in which the elements are layed out below matters. Any change could result 
-		 				in breaking the navigation bar.
-		-->
 		<!-- Search bar -->
-		<label class="item-input-wrapper" ng-show="isSearchBox">
+		<label class="item-input-wrapper" ng-show="isSearchBarShown()">
 			<i class="icon ion-ios7-search placeholder-icon"></i>
 			<form ng-submit="submit()" class="search-bar">
 				<input type="search" placeholder="Search stories" ng-model="query" ng-change="searchDidChange()">
 			</form>
 		</label>
-		<button class="button button-icon " on-tap="hideSearchBox()" ng-show="isSearchBox">Cancel</button>
+		<button class="button button-icon " on-tap="hideSearchBox()" ng-show="isSearchBarShown()">Cancel</button>
 		<!-- Bar buttons -->
-  		<div ng-if="!isSearchBox">
-			<ion-nav-buttons side="left" >
+  		<div ng-if="!isSearchBarShown()">
+			<ion-nav-buttons side="left">
 	    	<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
 	  		</ion-nav-buttons>
-
 			<ion-nav-buttons side="right">
 			<button class="button button-icon icon ion-ios7-search" on-tap="showSearchBox()"></button>
 	  		</ion-nav-buttons>
