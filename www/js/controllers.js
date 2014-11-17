@@ -7,9 +7,8 @@
 var app = angular.module('starter.controllers', []);
 
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $interval) {
-
   // Good debugging techinque to check if more then one controller is being used.
-  var controllerID = Math.random();
+  //var controllerID = Math.random();
 
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
@@ -18,7 +17,8 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   $scope.stories = function() {
     // Stories to use in the view
-    return $state.current.data.cachedStories;
+    //return $state.current.data.cachedStories;
+    return StoriesSearchService.getStories();
   };
 
   $scope.searchStories = function(completionBlock) {
@@ -32,11 +32,11 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
       function(stories) {
         console.log('Promise resolved!' + '\n ');
         // Cache stories
-        //$state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
-        stories.forEach(function (story) {
-          $state.current.data.cachedStories.push(story);
-        });
-        
+        // $state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
+        // stories.forEach(function (story) {
+        //   $state.current.data.cachedStories.push(story);
+        // });
+
         StoriesSearchService.clearStories();
 
         
@@ -66,7 +66,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     $state.current.data.cachedSearchQuery = $scope.query;
 
     // Clean stories queues
-    $state.current.data.cachedStories = [];
+    //$state.current.data.cachedStories = [];
     StoriesSearchService.clearAll();
 
     // This will prevent the infiniteScroll from loading more stories while searching.
@@ -116,7 +116,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   $scope.moreDataCanBeLoaded = function() {
     //console.log('moreDataCanBeLoaded');
-    if ($state.current.data.cachedStories.length > 0) {
+    if ($scope.stories().length > 0) { // StoriesSearchService.getStories(); $state.current.data.cachedStories
       return true;
     } else {
       return false;

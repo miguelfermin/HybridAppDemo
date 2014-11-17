@@ -73,6 +73,9 @@ app.factory('StoriesSearchService', function($http, $q) {
 		getStory: function(index) {
 			return cachedStories[index];
 		},
+		getStories: function(index) {
+			return cachedStories;
+		},
 		searchStories: function(query) {
 			console.log('page number: ',page);
 			var deferred = $q.defer();
