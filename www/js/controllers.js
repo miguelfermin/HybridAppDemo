@@ -165,13 +165,18 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
       window.cordova.plugins.Keyboard.close();
     }
   };
-
 });
 
 app.controller('StoryController', function($scope, story) {
   $scope.story = story;
 });
 
+app.controller('StoryNavigationBarController', function() {
+  // Added this controller to troubleshoot the issue: 
+  // "Figure out what's causing the "stories" title to misbehave when transition to detail view and fix."
+  var $element = $('ion-view ion-nav-bar h1');
+  console.log('StoryNavigationBarController, $element: ',$element);
+});
 
 
 // Experimental code
