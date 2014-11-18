@@ -16,7 +16,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 		if (data && data.hits && data.hits.length > 0) {
 			// The passed data object has the information to create the story object
 			data.hits.forEach(function(hit) {
-
+				//console.log('JSON.stringify(hit): ',JSON.stringify(hit));
 				// Only add stories that have text
 				if (hit._highlightResult.text)  {
 
