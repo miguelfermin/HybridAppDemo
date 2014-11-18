@@ -110,7 +110,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   });
 });
 
-app.controller('SearchBarController', function($scope, $location, $rootScope, $state, $timeout) {
+app.controller('SearchBarController', function($scope, $location, $rootScope, $state, $timeout, $ionicNavBarDelegate) {
   
   // Use jQuery to get DOM elements that need to be managed in this controller.
   var $ionViewTitleElement = $('ion-view ion-nav-bar h1');
@@ -120,8 +120,18 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
     return $state.current.data.isSearchBarShown;
   };
 
+  // Workaround to hide title after returning from the detail view.
+  if ($scope.isSearchBarShown()) {
+    $timeout(function() {
+      //$('ion-view ion-nav-bar h1:first').hide(); // These arenn't working
+      //$('ion-view ion-nav-bar h1:first').hide(); 
+      //$('ion-view ion-nav-bar h1:last').hide();
+      $ionicNavBarDelegate.setTitle(''); // just set text to empty for the demo.
+    });
+  }
+
   $scope.showSearchBox = function() {
-    $ionViewTitleElement.hide();
+    $('ion-view ion-nav-bar h1:last').hide();
     $state.current.data.isSearchBarShown = true;
     // Show keyboard.
     //
