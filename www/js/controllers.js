@@ -93,27 +93,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
     }
   };
 
-  $scope.isBrowser = function() {
-    // Tells if the app is running in a browser (and not a mobile device). It relies in fact that 'window.cordova.plugins' is undefined 
-    // when running the app in a broswer. A more sophisticated method is needed for a production app.
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Mobile Device
-      //  NOTE: Need to figure out how to use $cordovaDevice 
-      //        (https://github.com/apache/cordova-plugin-device/blob/master/doc/index.md)
-      // var device = window.cordova.plugins.Device.getDevice();
-      // var cordova = window.cordova.plugins.Device.getCordova();
-      // var model = window.cordova.plugins.Device.getModel();
-      // var platform = window.cordova.plugins.Device.getPlatform(); // This needs more testing
-      // var uuid = window.cordova.plugins.Device.getUUID();
-      // var version = window.cordova.plugins.Device.getVersion();
-      return false;
-    }
-    else {
-      // Browser
-      return true;
-    }
-  };
-
   $scope.moreDataCanBeLoaded = function() {
     //console.log('moreDataCanBeLoaded');
     if ($scope.stories().length > 0) { // StoriesSearchService.getStories(); $state.current.data.cachedStories
@@ -131,10 +110,11 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   });
 });
 
-app.controller('SearchBarController', function($scope, $location, $rootScope, $state) {
+app.controller('SearchBarController', function($scope, $location, $rootScope, $state, $timeout) {
   
-  // Use jQuery to get the ion-view's h1 element covering up the search bar
+  // Use jQuery to get DOM elements that need to be managed in this controller.
   var $ionViewTitleElement = $('ion-view ion-nav-bar h1');
+  var $inputElement = $('ion-view ion-nav-bar input');
 
   $scope.isSearchBarShown = function() {
     return $state.current.data.isSearchBarShown;
@@ -143,6 +123,16 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
   $scope.showSearchBox = function() {
     $ionViewTitleElement.hide();
     $state.current.data.isSearchBarShown = true;
+    // Show keyboard.
+    //
+    // NOTE: the statement "$state.current.data.isSearchBarShown = true" 
+    //       isn't a function call, it doesn't cause the the search to immediately show. 
+    //       Angular needs to finish the digest cycle after which time the search will appear.
+    //       
+    //       Hence the $timeout call below, it lets me focus the keyboard in the next digest cycle.
+    $timeout(function() {
+        $inputElement.focus();
+    });
   };
 
   $scope.hideSearchBox = function() {
@@ -160,10 +150,8 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
     // Tell the controller when the user submits the form (tap the search button)
     $rootScope.$broadcast('searchSubmitted', $scope.query);
 
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide keyboard on mobile devices
-      window.cordova.plugins.Keyboard.close();
-    }
+    // Hide keyboard
+    $inputElement.blur();
   };
 });
 
