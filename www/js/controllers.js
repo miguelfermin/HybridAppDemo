@@ -131,7 +131,7 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
   }
 
   $scope.showSearchBox = function() {
-    $('ion-view ion-nav-bar h1:last').hide();
+    $ionViewTitleElement.hide();
     $state.current.data.isSearchBarShown = true;
     // Show keyboard.
     //
