@@ -7,8 +7,13 @@
 var app = angular.module('starter.controllers', []);
 
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $interval) {
-  // Good debugging techinque to check if more then one controller is being used.
-  //var controllerID = Math.random();
+  // Use this variable turn ON/OFF the console.log()s
+  const DEBUG = false;
+
+  if (DEBUG) {
+    // Good debugging techinque to check if more then one controller is being used.
+    var controllerID = Math.random();
+  }
 
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
@@ -22,15 +27,18 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.searchStories = function(completionBlock) {
-    // console.log('searchStories - the service', controllerID);
-    // console.log('searchStories - $scope.query', $scope.query);
-
+    if (DEBUG) {
+      console.log('searchStories - the service', controllerID);
+      console.log('searchStories - $scope.query', $scope.query);
+    }
     // Handle StoriesSearchService's searchStories() returned promise
     StoriesSearchService.searchStories($scope.query).then(
 
       // Promise successful
       function(stories) {
-        console.log('Promise resolved!' + '\n ');
+        if (DEBUG) {
+          console.log('Promise resolved!' + '\n ');
+        }
         // Cache stories
         // $state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
         // stories.forEach(function (story) {
@@ -60,8 +68,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   var isSearching = false;
 
   $scope.performSearch = function() {
-    console.log('performSearch');
-
+    if (DEBUG) {
+      console.log('performSearch');
+    }
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
 
@@ -85,7 +94,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.loadMoreStories = function() {
-    console.log('loadMoreStories',isSearching);
+    if (DEBUG) {
+      console.log('loadMoreStories',isSearching);
+    }
     if (isSearching === false) {
       $scope.searchStories(function() {
         $scope.$broadcast('scroll.infiniteScrollComplete');
@@ -94,7 +105,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    //console.log('moreDataCanBeLoaded');
+    if (DEBUG) {
+      console.log('moreDataCanBeLoaded');
+    }
     if ($scope.stories().length > 0) { // StoriesSearchService.getStories(); $state.current.data.cachedStories
       return true;
     } else {
@@ -104,17 +117,26 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   // Listen to events from search bar
   $scope.$on('searchSubmitted', function(event, query) {
-    //console.log('searchSubmitted, query: ',query);
+    if (DEBUG) {
+      console.log('searchSubmitted, query: ',query);
+    }
     $scope.query = query;
     $scope.performSearch();
   });
 });
 
 app.controller('SearchBarController', function($scope, $location, $rootScope, $state, $timeout, $ionicNavBarDelegate) {
-  
+  // Use this variable turn ON/OFF the console.log()s
+  const DEBUG = false;
+
   // Use jQuery to get DOM elements that need to be managed in this controller.
   var $ionViewTitleElement = $('ion-view ion-nav-bar h1');
   var $inputElement = $('ion-view ion-nav-bar input');
+
+  if (DEBUG) {
+    console.log('$ionViewTitleElement: ',$ionViewTitleElement);
+    console.log('$inputElement: ',$inputElement);
+  }
 
   $scope.isSearchBarShown = function() {
     return $state.current.data.isSearchBarShown;
@@ -170,10 +192,17 @@ app.controller('StoryController', function($scope, story) {
 });
 
 app.controller('StoryNavigationBarController', function() {
+  // Use this variable turn ON/OFF the console.log()s
+  const DEBUG = false;
+
   // Added this controller to troubleshoot the issue: 
   // "Figure out what's causing the "stories" title to misbehave when transition to detail view and fix."
   var $element = $('ion-view ion-nav-bar h1');
-  console.log('StoryNavigationBarController, $element: ',$element);
+
+  if (DEBUG) {
+    console.log('StoryNavigationBarController, $element: ',$element);
+  }
+
 });
 
 

@@ -7,6 +7,9 @@
 var app = angular.module('starter.services', []);
 
 app.factory('StoriesSearchService', function($http, $q) {
+	// Use this variable turn ON/OFF the console.log()s
+	const DEBUG = false;
+
 	var stories = [];
 	var cachedStories = []; // Note: still thinking of alternatives for this cache...
 	var page = 0;
@@ -16,10 +19,12 @@ app.factory('StoriesSearchService', function($http, $q) {
 		if (data && data.hits && data.hits.length > 0) {
 			// The passed data object has the information to create the story object
 			data.hits.forEach(function(hit) {
-				//console.log('JSON.stringify(hit): ',JSON.stringify(hit));
+				if (DEBUG) {
+					console.log('JSON.stringify(hit): ',JSON.stringify(hit));
+				}
+
 				// Only add stories that have text
 				if (hit._highlightResult.text)  {
-
 					// Flag duplicates if any
 					stories.forEach(function(story) {
 						//console.log('story.id: ',story.id);
@@ -44,8 +49,11 @@ app.factory('StoriesSearchService', function($http, $q) {
 					cachedStories.push(story);
 				}
 			});
-			//console.log('number of stories loaded: ',stories.length);
-			//console.log('number of stories cached: ',cachedStories.length);
+
+			if (DEBUG) {
+				console.log('number of stories loaded: ',stories.length);
+				console.log('number of stories cached: ',cachedStories.length);
+			}
 		}
 	}
 	return {
@@ -77,7 +85,10 @@ app.factory('StoriesSearchService', function($http, $q) {
 			return cachedStories;
 		},
 		searchStories: function(query) {
-			console.log('page number: ',page);
+			if (DEBUG) {
+				console.log('page number: ',page);
+			}
+			
 			var deferred = $q.defer();
 			var params = {
 				q: query,
