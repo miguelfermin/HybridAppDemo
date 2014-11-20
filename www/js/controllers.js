@@ -125,52 +125,38 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   });
 });
 
-app.controller('SearchBarController', function($scope, $location, $rootScope, $state, $timeout, $ionicNavBarDelegate) {
-  // Use this variable turn ON/OFF the console.log()s
-  const DEBUG = false;
-
+app.controller('ActiveSearchBarController', function($scope, $location, $rootScope, $state, $timeout, $ionicNavBarDelegate, StoriesSearchService) {
   // Use jQuery to get DOM elements that need to be managed in this controller.
-  var $ionViewTitleElement = $('ion-view ion-nav-bar h1');
-  var $inputElement = $('ion-view ion-nav-bar input');
+  var $h1 = $('ion-view ion-nav-bar h1');
+  var $input = $('ion-view ion-nav-bar input');
 
-  if (DEBUG) {
-    console.log('$ionViewTitleElement: ',$ionViewTitleElement);
-    console.log('$inputElement: ',$inputElement);
-  }
-
+  // Keep this info in $state so it's persisted between views transitions and different instances of this controller
   $scope.isSearchBarShown = function() {
     return $state.current.data.isSearchBarShown;
   };
 
-  // Workaround to hide title after returning from the detail view.
-  if ($scope.isSearchBarShown()) {
-    $timeout(function() {
-      //$('ion-view ion-nav-bar h1:first').hide(); // These arenn't working
-      //$('ion-view ion-nav-bar h1:first').hide(); 
-      //$('ion-view ion-nav-bar h1:last').hide();
-      $ionicNavBarDelegate.setTitle(''); // just set text to empty for the demo.
-    });
-  }
-
-  $scope.showSearchBox = function() {
-    $ionViewTitleElement.hide();
+  $scope.showActiveSearchBar = function() {
+    StoriesSearchService.$e = $h1;
+    $h1.hide();
     $state.current.data.isSearchBarShown = true;
-    // Show keyboard.
-    //
-    // NOTE: the statement "$state.current.data.isSearchBarShown = true" 
-    //       isn't a function call, it doesn't cause the the search to immediately show. 
-    //       Angular needs to finish the digest cycle after which time the search will appear.
-    //       
-    //       Hence the $timeout call below, it lets me focus the keyboard in the next digest cycle.
+    // Show keyboard. The focus() call is wrapped inside a $timeout so that it can focus the keyboard in the next digest cycle.
     $timeout(function() {
-        $inputElement.focus();
+        $input.focus();
     });
   };
 
   $scope.hideSearchBox = function() {
-    $ionViewTitleElement.show();
+    $h1.show();
     $state.current.data.isSearchBarShown = false;
+    $rootScope.$broadcast('activeSearchBarWasHidden');
   };
+
+  // Passive Search bar was tapped event
+  $scope.$on('showActiveSearchBarInvoked', function(event, query) {
+    console.log('showActiveSearchBarInvoked broadcasted');
+    $scope.showActiveSearchBar();
+  });
+
 
   // Delegate search querie
   $scope.searchDidChange = function() {
@@ -183,36 +169,52 @@ app.controller('SearchBarController', function($scope, $location, $rootScope, $s
     $rootScope.$broadcast('searchSubmitted', $scope.query);
 
     // Hide keyboard
-    $inputElement.blur();
+    $input.blur();
   };
+
+  // Workaround to hide title after returning from the detail view.
+  if ($scope.isSearchBarShown() === true) {
+    $timeout(function() {
+      var $e = $('ion-view ion-nav-bar h1');
+      console.log('$e: ',$e);
+      console.log('StoriesSearchService.$e: ',StoriesSearchService.$e.textContent);
+      StoriesSearchService.$e.hide();
+    });}
+  if ($scope.isSearchBarShown()) {
+    $timeout(function() {
+      //$('ion-view ion-nav-bar h1:first').hide(); // These arenn't working
+      //$('ion-view ion-nav-bar h1:first').hide(); 
+      //$('ion-view ion-nav-bar h1:last').hide();
+      //$ionicNavBarDelegate.setTitle(''); // just set text to empty for the demo.
+    });}
+  // Workaround to hide title after returning from the detail view.
 });
 
-app.controller('StoryController', function($scope, story) {
+app.controller('PassiveSearchBarController', function($scope, $state, $rootScope) {
+  $scope.shouldShowPassiveSearchBar = function () {
+    return $state.current.data.shouldShowPassiveSearchBar;
+  };
+
+  $scope.showActiveSearchBar = function() {
+    $rootScope.$broadcast('showActiveSearchBarInvoked');
+    $state.current.data.shouldShowPassiveSearchBar = false;
+  };
+
+  $scope.$on('activeSearchBarWasHidden', function(event, query) {
+    console.log('activeSearchBarWasHidden broadcasted');
+    $state.current.data.shouldShowPassiveSearchBar = true;
+  });
+});
+
+app.controller('StoryController', function($scope, story, $timeout) {
   $scope.story = story;
+  // var $element = $('ion-view ion-nav-bar h1');
+  // console.log('$element: ',$element, '\n ');
+  // $timeout(function() {
+  //   $element.hide();
+  // });
 });
 
-app.controller('StoryNavigationBarController', function() {
-  // Use this variable turn ON/OFF the console.log()s
-  const DEBUG = false;
-
-  // Added this controller to troubleshoot the issue: 
-  // "Figure out what's causing the "stories" title to misbehave when transition to detail view and fix."
-  var $element = $('ion-view ion-nav-bar h1');
-
-  if (DEBUG) {
-    console.log('StoryNavigationBarController, $element: ',$element);
-  }
-
-});
-
-
-// Experimental code
-// console.log('$location.path() ' + $location.path());
-// $location.search( { q: $scope.query } );
-// $scope.$on('$locationChangeSuccess', function() {
-//   console.log('locationChangeSuccess');
-//   updateSearchFromURL();
-// });
 
 /* NOTE: Please ignore the controllers below. They are not being used for now. */
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {
@@ -285,3 +287,10 @@ app.controller('StoriesController', function($scope, $ionicScrollDelegate, Stori
     });
   };
 });
+// Experimental code
+// console.log('$location.path() ' + $location.path());
+// $location.search( { q: $scope.query } );
+// $scope.$on('$locationChangeSuccess', function() {
+//   console.log('locationChangeSuccess');
+//   updateSearchFromURL();
+// });

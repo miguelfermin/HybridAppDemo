@@ -53,7 +53,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     data: {
       cachedSearchQuery: null,
       cachedStories: [],
-      isSearchBarShown: false
+      isSearchBarShown: false,
+      shouldShowPassiveSearchBar: true
     }
   });
 
