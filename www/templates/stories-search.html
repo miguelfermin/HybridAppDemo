@@ -1,21 +1,12 @@
-<ion-view title="Stories">
+<ion-view id="StoriesViewTitle" title="Stories">
 	<!-- <ion-pane> -->
 	<ion-nav-bar class="bar-positive item-input-inset" ng-controller="ActiveSearchBarController">
 
-		<!-- Navigation Bar -->
-		<ion-nav-buttons side="left" ng-if="!isSearchBarShown()">
-			<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-		</ion-nav-buttons>
-
-  		<!--div ng-if="!isSearchBarShown()">
-			<ion-nav-buttons side="left">
-	    		<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-	  		</ion-nav-buttons>
-			<ion-nav-buttons side="right">
-			<button class="button button-icon icon ion-ios7-search" on-tap="showSearchBox()"></button>
-	  		</ion-nav-buttons>
-  		</div-->
-  		<!-- Navigation Bar End-->
+		<!-- Navigation Bar Menu button-->
+  		<ion-nav-buttons side="left" ng-if="!isSearchBarShown()">
+    		<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+  		</ion-nav-buttons>
+  		<!-- Navigation Bar Menu button End-->
 
   		<!-- Active Search bar -->
 		<label class="item-input-wrapper" ng-show="isSearchBarShown()">
@@ -27,8 +18,7 @@
 		<button class="button button-icon" on-tap="hideSearchBox()" ng-show="isSearchBarShown()">Cancel</button>
 		<!-- Active Search bar End -->
 	</ion-nav-bar>
-	<!-- </ion-pane> -->
-
+	
 	<!-- List of stories -->
 	<ion-content>
 		<!-- Passive Search bar -->
@@ -39,15 +29,6 @@
 		  </label>
 		</div>
 		<!-- Passive Search bar End-->
-
-		<!-- 
-		Pull to refresh. The default behavior is to performa general search. 
-		NOTE: once infinite scrolling and paging is enabled, I'll have to keep track of the search page and position so after the refresh we go back to the same place.--
-		<ion-refresher 
-		refreshing-icon="ion-loading-d"
-    	pulling-text="Pull to refresh..."
-    	on-refresh="performSearch()">
-  		</ion-refresher-->
 
 		<!-- Stories List -->
 		<div class="list">

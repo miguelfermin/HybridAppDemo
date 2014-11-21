@@ -10,7 +10,9 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   // Good debugging techinque to check if more then one controller is being used.
   //var controllerID = Math.random();
 
-  // Get list to previous state using cached query and stories
+  var isSearching = false;
+
+  // Get list to previous state using cached query
   if ($state.current.data.cachedSearchQuery) {
     $scope.query = $state.current.data.cachedSearchQuery;
   }
@@ -37,8 +39,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
         console.log('failedInfo: ' + failedInfo);
       });
   };
-
-  var isSearching = false;
 
   $scope.performSearch = function() {
     // Cache the search query to add it to the search box when coming back from the detail view
@@ -71,7 +71,7 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    if ($scope.stories().length > 0) { // StoriesSearchService.getStories(); $state.current.data.cachedStories
+    if ($scope.stories().length > 0) {
       return true;
     } else {
       return false;
@@ -86,28 +86,26 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 });
 
 app.controller('ActiveSearchBarController', function($scope, $location, $rootScope, $state, $timeout, $ionicNavBarDelegate, StoriesSearchService) {
-  // Use jQuery to get DOM elements that need to be managed in this controller.
-  var $h1 = $('ion-view ion-nav-bar h1');
-  var $input = $('ion-view ion-nav-bar input');
-
   // Keep this info in $state so it's persisted between views transitions and different instances of this controller
   $scope.isSearchBarShown = function() {
     return $state.current.data.isSearchBarShown;
   };
 
   $scope.showActiveSearchBar = function() {
-    StoriesSearchService.$e = $h1;
-    $h1.hide();
     $state.current.data.isSearchBarShown = true;
     $timeout(function() {
-      $input.focus();
+      $('ion-view ion-nav-bar input').focus();
+      $('ion-view ion-nav-bar h1').hide();
     });
   };
 
   $scope.hideSearchBox = function() {
-    $h1.show();
     $state.current.data.isSearchBarShown = false;
     $rootScope.$broadcast('activeSearchBarWasHidden');
+    $timeout(function() {
+      $('ion-view ion-nav-bar h1').show();
+      $ionicNavBarDelegate.align('center');
+    },500);
   };
 
   // Passive Search bar was tapped event
@@ -115,16 +113,22 @@ app.controller('ActiveSearchBarController', function($scope, $location, $rootSco
     $scope.showActiveSearchBar();
   });
 
-  // Delegate search querie
+  // Delegate search query to StoriesSearchController
   $scope.searchDidChange = function() {
     $rootScope.$broadcast('searchQueryChanged', $scope.query);
   };
 
   $scope.submit = function() {
-    // Tell the controller when the user submits the form (tap the search button)
     $rootScope.$broadcast('searchSubmitted', $scope.query);
-    $input.blur(); // Hide keyboard
+    $('ion-view ion-nav-bar input').blur(); // Hide keyboard
   };
+
+  // Hide title if is shown when returning from detail view and the active search bar is presented
+  if ($scope.isSearchBarShown() === true) {
+    $timeout(function() {
+      $('ion-view ion-nav-bar h1').hide();
+    },300); // Without this 300ms delay, it doesn't work.
+  }
 });
 
 app.controller('PassiveSearchBarController', function($scope, $state, $rootScope) {
@@ -142,18 +146,9 @@ app.controller('PassiveSearchBarController', function($scope, $state, $rootScope
   });
 });
 
-app.controller('StoryController', function($scope, story, $timeout) {
+app.controller('StoryController', function($scope, story, $timeout, $ionicNavBarDelegate) {
   $scope.story = story;
-
-  var $element = $('ion-view ion-nav-bar h1');
-  console.log('$element: ',$element, '\n ');
-
-  $timeout(function() {
-    $element.hide();
-  });
-
 });
-
 
 /* NOTE: Please ignore the controllers below. They are not being used for now. */
 app.controller('SearchFilterCtrl', function($scope, $http, $ionicScrollDelegate) {

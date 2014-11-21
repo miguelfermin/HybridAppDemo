@@ -8,12 +8,12 @@ var app = angular.module('starter.services', []);
 
 app.factory('StoriesSearchService', function($http, $q) {
 	// Use this variable turn ON/OFF the console.log()s
-	const DEBUG = false;
+	var DEBUG = false;
 	var stories = [];
 	var cachedStories = []; // Note: still thinking of alternatives for this cache...
 	var page = 0;
 	var storyCounter = 0;
-	
+
 	function createStoriesWithData (data) {
 		if (data && data.hits && data.hits.length > 0) {
 			// The passed data object has the information to create the story object
@@ -23,8 +23,6 @@ app.factory('StoriesSearchService', function($http, $q) {
 				if (hit._highlightResult.text)  {
 					// Flag duplicates if any
 					stories.forEach(function(story) {
-						//console.log('story.id: ',story.id);
-						//console.log('hit.$id: ',hit.$id,'\n ');
 						if (story.id === hit.$id) {
 							alert('DUPLICATE STORY WITH ID: ',story.id, 'and: ', hit.$id);
 						}
