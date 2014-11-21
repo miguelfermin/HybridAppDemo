@@ -7,13 +7,8 @@
 var app = angular.module('starter.controllers', []);
 
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $interval) {
-  // Use this variable turn ON/OFF the console.log()s
-  const DEBUG = false;
-
-  if (DEBUG) {
-    // Good debugging techinque to check if more then one controller is being used.
-    var controllerID = Math.random();
-  }
+  // Good debugging techinque to check if more then one controller is being used.
+  //var controllerID = Math.random();
 
   // Get list to previous state using cached query and stories
   if ($state.current.data.cachedSearchQuery) {
@@ -22,43 +17,21 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   $scope.stories = function() {
     // Stories to use in the view
-    //return $state.current.data.cachedStories;
     return StoriesSearchService.getStories();
   };
 
   $scope.searchStories = function(completionBlock) {
-    if (DEBUG) {
-      console.log('searchStories - the service', controllerID);
-      console.log('searchStories - $scope.query', $scope.query);
-    }
     // Handle StoriesSearchService's searchStories() returned promise
     StoriesSearchService.searchStories($scope.query).then(
-
       // Promise successful
       function(stories) {
-        if (DEBUG) {
-          console.log('Promise resolved!' + '\n ');
-        }
-        // Cache stories
-        // $state.current.data.cachedStories = stories; // This will changed if I decided to remove the story cache from app.js
-        // stories.forEach(function (story) {
-        //   $state.current.data.cachedStories.push(story);
-        // });
-
         StoriesSearchService.clearStories();
-
-        
-        // Notify observers we're done loading content
-        //$scope.$broadcast('scroll.refreshComplete'); /* Disabled for now until I fix the unwanted infinite scrolling issue. */
-
         // The 'loadMoreStories' function would pass a function to call when the promise is resolved
         if (completionBlock) {
           completionBlock();
         }
-
         StoriesSearchService.incrementPage();
       },
-
       // Promise failed, handle error
       function(failedInfo) {
         console.log('failedInfo: ' + failedInfo);
@@ -68,14 +41,10 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   var isSearching = false;
 
   $scope.performSearch = function() {
-    if (DEBUG) {
-      console.log('performSearch');
-    }
     // Cache the search query to add it to the search box when coming back from the detail view
     $state.current.data.cachedSearchQuery = $scope.query;
 
     // Clean stories queues
-    //$state.current.data.cachedStories = [];
     StoriesSearchService.clearAll();
 
     // This will prevent the infiniteScroll from loading more stories while searching.
@@ -94,9 +63,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.loadMoreStories = function() {
-    if (DEBUG) {
-      console.log('loadMoreStories',isSearching);
-    }
     if (isSearching === false) {
       $scope.searchStories(function() {
         $scope.$broadcast('scroll.infiniteScrollComplete');
@@ -105,9 +71,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    if (DEBUG) {
-      console.log('moreDataCanBeLoaded');
-    }
     if ($scope.stories().length > 0) { // StoriesSearchService.getStories(); $state.current.data.cachedStories
       return true;
     } else {
@@ -117,9 +80,6 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
 
   // Listen to events from search bar
   $scope.$on('searchSubmitted', function(event, query) {
-    if (DEBUG) {
-      console.log('searchSubmitted, query: ',query);
-    }
     $scope.query = query;
     $scope.performSearch();
   });
@@ -139,9 +99,8 @@ app.controller('ActiveSearchBarController', function($scope, $location, $rootSco
     StoriesSearchService.$e = $h1;
     $h1.hide();
     $state.current.data.isSearchBarShown = true;
-    // Show keyboard. The focus() call is wrapped inside a $timeout so that it can focus the keyboard in the next digest cycle.
     $timeout(function() {
-        $input.focus();
+      $input.focus();
     });
   };
 
@@ -153,41 +112,19 @@ app.controller('ActiveSearchBarController', function($scope, $location, $rootSco
 
   // Passive Search bar was tapped event
   $scope.$on('showActiveSearchBarInvoked', function(event, query) {
-    console.log('showActiveSearchBarInvoked broadcasted');
     $scope.showActiveSearchBar();
   });
 
-
   // Delegate search querie
   $scope.searchDidChange = function() {
-    // Tell the controller that the query changed
     $rootScope.$broadcast('searchQueryChanged', $scope.query);
   };
 
   $scope.submit = function() {
     // Tell the controller when the user submits the form (tap the search button)
     $rootScope.$broadcast('searchSubmitted', $scope.query);
-
-    // Hide keyboard
-    $input.blur();
+    $input.blur(); // Hide keyboard
   };
-
-  // Workaround to hide title after returning from the detail view.
-  if ($scope.isSearchBarShown() === true) {
-    $timeout(function() {
-      var $e = $('ion-view ion-nav-bar h1');
-      console.log('$e: ',$e);
-      console.log('StoriesSearchService.$e: ',StoriesSearchService.$e.textContent);
-      StoriesSearchService.$e.hide();
-    });}
-  if ($scope.isSearchBarShown()) {
-    $timeout(function() {
-      //$('ion-view ion-nav-bar h1:first').hide(); // These arenn't working
-      //$('ion-view ion-nav-bar h1:first').hide(); 
-      //$('ion-view ion-nav-bar h1:last').hide();
-      //$ionicNavBarDelegate.setTitle(''); // just set text to empty for the demo.
-    });}
-  // Workaround to hide title after returning from the detail view.
 });
 
 app.controller('PassiveSearchBarController', function($scope, $state, $rootScope) {
@@ -201,18 +138,20 @@ app.controller('PassiveSearchBarController', function($scope, $state, $rootScope
   };
 
   $scope.$on('activeSearchBarWasHidden', function(event, query) {
-    console.log('activeSearchBarWasHidden broadcasted');
     $state.current.data.shouldShowPassiveSearchBar = true;
   });
 });
 
 app.controller('StoryController', function($scope, story, $timeout) {
   $scope.story = story;
-  // var $element = $('ion-view ion-nav-bar h1');
-  // console.log('$element: ',$element, '\n ');
-  // $timeout(function() {
-  //   $element.hide();
-  // });
+
+  var $element = $('ion-view ion-nav-bar h1');
+  console.log('$element: ',$element, '\n ');
+
+  $timeout(function() {
+    $element.hide();
+  });
+
 });
 
 

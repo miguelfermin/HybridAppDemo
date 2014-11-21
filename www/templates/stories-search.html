@@ -1,14 +1,20 @@
 <ion-view title="Stories">
+	<!-- <ion-pane> -->
 	<ion-nav-bar class="bar-positive item-input-inset" ng-controller="ActiveSearchBarController">
+
 		<!-- Navigation Bar -->
-  		<div ng-if="!isSearchBarShown()">
+		<ion-nav-buttons side="left" ng-if="!isSearchBarShown()">
+			<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+		</ion-nav-buttons>
+
+  		<!--div ng-if="!isSearchBarShown()">
 			<ion-nav-buttons side="left">
 	    		<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
 	  		</ion-nav-buttons>
-			<!--ion-nav-buttons side="right">
+			<ion-nav-buttons side="right">
 			<button class="button button-icon icon ion-ios7-search" on-tap="showSearchBox()"></button>
-	  		</ion-nav-buttons-->
-  		</div>
+	  		</ion-nav-buttons>
+  		</div-->
   		<!-- Navigation Bar End-->
 
   		<!-- Active Search bar -->
@@ -21,6 +27,7 @@
 		<button class="button button-icon" on-tap="hideSearchBox()" ng-show="isSearchBarShown()">Cancel</button>
 		<!-- Active Search bar End -->
 	</ion-nav-bar>
+	<!-- </ion-pane> -->
 
 	<!-- List of stories -->
 	<ion-content>
