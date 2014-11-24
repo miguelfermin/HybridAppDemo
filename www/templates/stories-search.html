@@ -1,6 +1,6 @@
-<ion-view id="StoriesViewTitle" title="Stories">
+<ion-view title="Roll Call">
 	<!-- <ion-pane> -->
-	<ion-nav-bar class="bar-positive item-input-inset" ng-controller="ActiveSearchBarController">
+	<ion-nav-bar class="positive item-input-inset" ng-controller="ActiveSearchBarController">
 
 		<!-- Navigation Bar Menu button-->
   		<ion-nav-buttons side="left" ng-if="!isSearchBarShown()">
@@ -18,7 +18,7 @@
 		<button class="button button-icon" on-tap="hideSearchBox()" ng-show="isSearchBarShown()">Cancel</button>
 		<!-- Active Search bar End -->
 	</ion-nav-bar>
-	
+
 	<!-- List of stories -->
 	<ion-content>
 		<!-- Passive Search bar -->
