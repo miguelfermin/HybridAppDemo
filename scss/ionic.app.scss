@@ -15,9 +15,23 @@ $royal:                           #8a6de9 !default;
 $dark:                            #444 !default;
 */
 
+
+/* Edit SCSS here */
+$positive: #476CDA;
+
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
-
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
+
+/* Good old CSS */
+body {cursor: url('http://ionicframework.com/img/finger.png'), auto;}
+.my-item {left: 0;right: 0;padding-top: 0;padding-bottom: 0;} 
+.search-bar {width: 100%;}
+.storyTitle {color:#70B8FF;}
+.headline-background {background: url('../img/paper.png');}
+.headline-font {
+	//font-family: "Goudy Bookletter 1911", sans-serif;
+	//font-family: "Lucida Console", Courier, monospace;
+}
