@@ -134,4 +134,7 @@ app.controller('ActiveSearchBarController', function($scope, $location, $rootSco
 
 app.controller('StoryController', function($scope, story, $timeout, $ionicNavBarDelegate) {
   $scope.story = story;
+  $scope.showShareSheet = function() {
+    window.plugins.socialsharing.share(story.title, null, null, story.url);
+  };
 });

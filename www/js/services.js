@@ -36,6 +36,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 						pub_id: hit.pub.$id,
 						pub_name: hit.pub.name,
 						authors: hit.authors,
+						url: hit.view_url,
 						number: storyCounter += 1
 					};
 					stories.push(story);
