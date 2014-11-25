@@ -35,7 +35,7 @@
 			ng-style="{'line-height' :'80px'}"
 			ui-sref="app.stories-search.detail({story: $index})">
 			<i class="icon ion-chevron-right icon-accessory"></i>
-			{{story.title}}
+			<p ng-bind-html="story.title"></p>
     		</a>
 		</div>
 		<!-- Stories List End-->
