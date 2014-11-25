@@ -71,11 +71,12 @@ app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate,
   };
 
   $scope.moreDataCanBeLoaded = function() {
-    if ($scope.stories().length > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return true;
+    // if ($scope.stories().length > 0) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   };
 
   // Listen to events from search bar
@@ -134,16 +135,3 @@ app.controller('ActiveSearchBarController', function($scope, $location, $rootSco
 app.controller('StoryController', function($scope, story, $timeout, $ionicNavBarDelegate) {
   $scope.story = story;
 });
-
-// app.controller('PassiveSearchBarController', function($scope, $state, $rootScope) {
-//   $scope.shouldShowPassiveSearchBar = function () {
-//     return $state.current.data.shouldShowPassiveSearchBar;
-//   };
-//   $scope.showActiveSearchBar = function() {
-//     $rootScope.$broadcast('showActiveSearchBarInvoked');
-//     $state.current.data.shouldShowPassiveSearchBar = false;
-//   };
-//   $scope.$on('activeSearchBarWasHidden', function(event, query) {
-//     $state.current.data.shouldShowPassiveSearchBar = true;
-//   });
-// });

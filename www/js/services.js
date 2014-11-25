@@ -83,7 +83,12 @@ app.factory('StoriesSearchService', function($http, $q) {
 				q: query,
 				page: page
 			};
-			$http({ method: 'GET', url: 'http://dev.acindex.com/search', params: params })
+
+			if (DEBUG) {
+				console.log('http://news.acindex.com/search?q=',params.q,'&page=',params.page, '\n ');
+			}
+
+			$http({ method: 'GET', url: 'http://news.acindex.com/search', params: params })
 				.success(function(data) {
 					// Use data object to create stories and resolve promise
 					createStoriesWithData(data);
