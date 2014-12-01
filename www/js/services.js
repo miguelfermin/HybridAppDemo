@@ -24,7 +24,7 @@ app.factory('StoriesSearchService', function($http, $q) {
 					// Flag duplicates if any
 					stories.forEach(function(story) {
 						if (story.id === hit.$id) {
-							alert('DUPLICATE STORY WITH ID: ',story.id, 'and: ', hit.$id);
+							console.log('DUPLICATE STORY WITH ID: ',story.id, 'and: ', hit.$id);
 						}
 					});
 					// Create literal story object and add to stories array
@@ -86,10 +86,10 @@ app.factory('StoriesSearchService', function($http, $q) {
 			};
 
 			if (DEBUG) {
-				console.log('http://news.acindex.com/search?q=',params.q,'&page=',params.page, '\n ');
+				console.log('http://rollcall.acindex.com/search?q=',params.q,'&page=',params.page, '\n ');
 			}
 
-			$http({ method: 'GET', url: 'http://news.acindex.com/search', params: params })
+			$http({ method: 'GET', url: 'http://rollcall.acindex.com/search', params: params })
 				.success(function(data) {
 					// Use data object to create stories and resolve promise
 					createStoriesWithData(data);
