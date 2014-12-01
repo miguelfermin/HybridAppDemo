@@ -6,6 +6,50 @@
 //
 var app = angular.module('starter.controllers', []);
 
+app.controller('MainController', function($scope) {
+  console.log('MainController...');
+
+  /*
+  // HockeyApp keys / secrets
+  var iosKey = '94fe25f0d9f9740dbff76acb421af800';
+  var iosSecret = '16e50753a4128b6697f941c069ecd88f';
+  var androidKey = 'd8819dffa508288a78b13c3a6047f4d8';
+  var androidSecret = '5157c09f7a17d2db5f5348b147eb44c9';
+
+  // Initialize HockeyApp SDK
+  window.cordova.plugins.hockeyapp.start(
+    function() {
+      // body...
+      console.log('cordova.plugins.hockeyapp.start...success failure callback');
+    },
+    function() {
+      // body...
+      console.log('cordova.plugins.hockeyapp.start...failure callback');
+    },
+    iosKey);
+
+  // Display tester feedback UI
+  window.cordova.plugins.hockeyapp.feedback(
+    function() {
+      // body...
+      console.log('cordova.plugins.hockeyapp.start...success callback');
+    },
+    function() {
+      // body...
+      console.log('cordova.plugins.hockeyapp.start...failure callback');
+    });
+  */
+ 
+  // var hockeyapp = {
+  //   start:function(success, failure, token) {
+  //     exec(success, failure, "HockeyApp", "start", [ token ]);
+  //   },
+  //   feedback:function(success, failure) {
+  //     exec(success, failure, "HockeyApp", "feedback", []);
+  //   }
+  // };
+});
+
 app.controller('StoriesSearchController', function($scope, $ionicScrollDelegate, $state, StoriesSearchService, $interval) {
   // Good debugging techinque to check if more then one controller is being used.
   //var controllerID = Math.random();
@@ -137,4 +181,25 @@ app.controller('StoryController', function($scope, story, $timeout, $ionicNavBar
   $scope.showShareSheet = function() {
     window.plugins.socialsharing.share(story.title, null, null, story.url);
   };
+
+  console.log('window.plugins.hockeyapp: ',window.plugins.hockeyapp);
+  console.log('window.plugins.socialsharing: ',window.plugins.socialsharing);
+
+  // HockeyApp keys / secrets
+  var iosKey = '94fe25f0d9f9740dbff76acb421af800';
+  var iosSecret = '16e50753a4128b6697f941c069ecd88f';
+  var androidKey = 'd8819dffa508288a78b13c3a6047f4d8';
+  var androidSecret = '5157c09f7a17d2db5f5348b147eb44c9';
+  
+  // Initialize HockeyApp SDK
+  // window.plugins.hockeyapp.start(
+  //   function() {console.log('cordova.plugins.hockeyapp.start...success failure callback');},
+  //   function() {console.log('cordova.plugins.hockeyapp.start...failure callback');},
+  //   iosKey);
+  
+  // Display tester feedback UI
+  // window.plugins.hockeyapp.feedback(
+  //   function() {console.log('cordova.plugins.hockeyapp.start...success callback');},
+  //   function() {console.log('cordova.plugins.hockeyapp.start...failure callback');});
 });
+
