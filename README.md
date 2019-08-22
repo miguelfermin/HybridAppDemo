@@ -32,7 +32,7 @@ HybridAppDemo
 
 ### Useful links: ###
 
-* [Getting started with Ionic] (http://ionicframework.com/getting-started/)
+* [Getting started with Ionic](http://ionicframework.com/getting-started/)
 * [Xcode SDK](https://developer.apple.com/xcode/downloads/)
 * [Android's SDK](https://developer.android.com/sdk/index.html?hl=i)
 * [Genymotion](https://cloud.genymotion.com/page/launchpad/download/)
