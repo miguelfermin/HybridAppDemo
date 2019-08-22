@@ -42,4 +42,4 @@ HybridAppDemo
 
 ### Who do I talk to? ###
 
-* [Miguel Fermin] (mailto:mfermin@newstex.com)
+* [Miguel Fermin](mailto:mfermin@newstex.com)
